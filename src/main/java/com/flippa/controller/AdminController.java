@@ -95,6 +95,7 @@ public class AdminController {
     @GetMapping("/listings")
     public String listings(Model model) {
         model.addAttribute("listings", listingService.getAllActiveListings());
+        model.addAttribute("pendingListings", listingService.getPendingReviewListings());
         return "admin/listings";
     }
     

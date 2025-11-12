@@ -52,8 +52,17 @@ public class ListingController {
         
         try {
             User user = getCurrentUser(authentication);
-            listingService.createListing(listingDTO, user, request);
-            redirectAttributes.addFlashAttribute("success", "Listing created successfully!");
+            Listing createdListing = listingService.createListing(listingDTO, user, request);
+            
+            // Show appropriate message based on listing status
+            if (createdListing.getStatus() == Listing.ListingStatus.ACTIVE) {
+                redirectAttributes.addFlashAttribute("success", 
+                    "Listing created successfully and is now live! View it on the listings page.");
+            } else {
+                redirectAttributes.addFlashAttribute("success", 
+                    "Listing created successfully! It's pending admin review and will be visible once approved.");
+            }
+            
             return "redirect:/my-listings";
         } catch (Exception e) {
             result.reject("error.creation", "Failed to create listing: " + e.getMessage());

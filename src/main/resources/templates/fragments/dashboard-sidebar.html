@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<body>
+    <!-- Dashboard Sidebar Fragment -->
+    <th:block th:fragment="admin-sidebar">
+        <aside id="sidebar" class="sidebar fixed md:static inset-y-0 left-0 z-40 w-64 bg-[#1e3a5f] text-white transform md:transform-none transition-transform duration-300 ease-in-out">
+            <div class="flex flex-col h-full">
+                <!-- Logo Section -->
+                <div class="p-4 border-b border-blue-700">
+                    <div class="flex items-center space-x-2">
+                        <i class="fas fa-store text-2xl text-blue-300"></i>
+                        <span class="font-bold text-lg" th:text="${systemName != null ? systemName : 'Flippa Clone'}">Flippa Clone</span>
+                    </div>
+                </div>
+                
+                <!-- Navigation Links -->
+                <nav class="flex-1 overflow-y-auto p-4 space-y-2">
+                    <a href="/admin" th:classappend="${#httpServletRequest.requestURI == '/admin' ? 'bg-blue-700' : ''}" class="flex items-center space-x-3 p-3 rounded-lg hover:bg-blue-600 transition-colors">
+                        <i class="fas fa-home w-5"></i>
+                        <span>Dashboard</span>
+                    </a>
+                    <a href="/admin/users" th:classappend="${#strings.contains(#httpServletRequest.requestURI, '/admin/users') ? 'bg-blue-700' : ''}" class="flex items-center space-x-3 p-3 rounded-lg hover:bg-blue-600 transition-colors">
+                        <i class="fas fa-users w-5"></i>
+                        <span>Users</span>
+                    </a>
+                    <a href="/admin/listings" th:classappend="${#strings.contains(#httpServletRequest.requestURI, '/admin/listings') ? 'bg-blue-700' : ''}" class="flex items-center space-x-3 p-3 rounded-lg hover:bg-blue-600 transition-colors">
+                        <i class="fas fa-list w-5"></i>
+                        <span>Listings</span>
+                    </a>
+                    <a href="/admin/disputes" th:classappend="${#strings.contains(#httpServletRequest.requestURI, '/admin/disputes') ? 'bg-blue-700' : ''}" class="flex items-center space-x-3 p-3 rounded-lg hover:bg-blue-600 transition-colors">
+                        <i class="fas fa-gavel w-5"></i>
+                        <span>Disputes</span>
+                    </a>
+                    <a href="/admin/settings" th:classappend="${#strings.contains(#httpServletRequest.requestURI, '/admin/settings') ? 'bg-blue-700' : ''}" class="flex items-center space-x-3 p-3 rounded-lg hover:bg-blue-600 transition-colors">
+                        <i class="fas fa-cog w-5"></i>
+                        <span>Settings</span>
+                    </a>
+                    <div class="pt-4 border-t border-blue-700">
+                        <a href="/" class="flex items-center space-x-3 p-3 rounded-lg hover:bg-blue-600 transition-colors">
+                            <i class="fas fa-arrow-left w-5"></i>
+                            <span>Back to Site</span>
+                        </a>
+                        <form th:action="@{/logout}" method="post" class="inline w-full">
+                            <button type="submit" class="flex items-center space-x-3 p-3 rounded-lg hover:bg-blue-600 transition-colors w-full text-left">
+                                <i class="fas fa-sign-out-alt w-5"></i>
+                                <span>Logout</span>
+                            </button>
+                        </form>
+                    </div>
+                </nav>
+            </div>
+        </aside>
+    </th:block>
+
+    <th:block th:fragment="user-sidebar">
+        <aside id="sidebar" class="sidebar fixed md:static inset-y-0 left-0 z-40 w-64 bg-[#1e3a5f] text-white transform md:transform-none transition-transform duration-300 ease-in-out">
+            <div class="flex flex-col h-full">
+                <!-- Logo Section -->
+                <div class="p-4 border-b border-blue-700">
+                    <div class="flex items-center space-x-2">
+                        <i class="fas fa-store text-2xl text-blue-300"></i>
+                        <span class="font-bold text-lg" th:text="${systemName != null ? systemName : 'Flippa Clone'}">Flippa Clone</span>
+                    </div>
+                </div>
+                
+                <!-- Navigation Links -->
+                <nav class="flex-1 overflow-y-auto p-4 space-y-2">
+                    <a href="/" class="flex items-center space-x-3 p-3 rounded-lg hover:bg-blue-600 transition-colors">
+                        <i class="fas fa-home w-5"></i>
+                        <span>Home</span>
+                    </a>
+                    <a href="/listings" class="flex items-center space-x-3 p-3 rounded-lg hover:bg-blue-600 transition-colors">
+                        <i class="fas fa-search w-5"></i>
+                        <span>Browse Listings</span>
+                    </a>
+                    <a href="/my-listings" th:classappend="${#strings.contains(#httpServletRequest.requestURI, '/my-listings') ? 'bg-blue-700' : ''}" class="flex items-center space-x-3 p-3 rounded-lg hover:bg-blue-600 transition-colors">
+                        <i class="fas fa-list w-5"></i>
+                        <span>My Listings</span>
+                    </a>
+                    <a href="/escrow/my-escrows" th:classappend="${#strings.contains(#httpServletRequest.requestURI, '/escrow/my-escrows') ? 'bg-blue-700' : ''}" class="flex items-center space-x-3 p-3 rounded-lg hover:bg-blue-600 transition-colors">
+                        <i class="fas fa-shield-halved w-5"></i>
+                        <span>My Escrows</span>
+                    </a>
+                    <span sec:authorize="hasAnyRole('ADMIN', 'SUPER_ADMIN')">
+                        <a href="/admin" class="flex items-center space-x-3 p-3 rounded-lg hover:bg-blue-600 transition-colors">
+                            <i class="fas fa-user-shield w-5"></i>
+                            <span>Admin</span>
+                        </a>
+                    </span>
+                    <div class="pt-4 border-t border-blue-700">
+                        <form th:action="@{/logout}" method="post" class="inline w-full">
+                            <button type="submit" class="flex items-center space-x-3 p-3 rounded-lg hover:bg-blue-600 transition-colors w-full text-left">
+                                <i class="fas fa-sign-out-alt w-5"></i>
+                                <span>Logout</span>
+                            </button>
+                        </form>
+                    </div>
+                </nav>
+            </div>
+        </aside>
+    </th:block>
+
+    <th:block th:fragment="dashboard-header">
+        <header class="bg-white border-b shadow-sm sticky top-0 z-50">
+            <div class="flex items-center justify-between px-4 py-3">
+                <div class="flex items-center space-x-4">
+                    <button id="mobile-menu-btn" class="md:hidden text-gray-700 hover:text-blue-600">
+                        <i class="fas fa-bars text-xl"></i>
+                    </button>
+                    <a href="/" class="flex items-center space-x-2">
+                        <i class="fas fa-store text-blue-600 text-xl"></i>
+                        <span class="font-extrabold text-lg" th:text="${systemName != null ? systemName : 'Flippa Clone'}">Flippa Clone</span>
+                    </a>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <a href="/" class="hidden md:block text-gray-700 hover:text-blue-600 text-sm">Home</a>
+                    <a href="/listings" class="hidden md:block text-gray-700 hover:text-blue-600 text-sm">Browse</a>
+                    <form th:action="@{/logout}" method="post" class="inline">
+                        <button type="submit" class="text-gray-700 hover:text-blue-600 text-sm">
+                            <i class="fas fa-sign-out-alt mr-1"></i>Logout
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </header>
+    </th:block>
+
+    <th:block th:fragment="dashboard-scripts">
+        <script>
+            function toggleSidebar() {
+                const sidebar = document.getElementById('sidebar');
+                const overlay = document.getElementById('sidebar-overlay');
+                if (sidebar) {
+                    sidebar.classList.toggle('open');
+                }
+                if (overlay) {
+                    overlay.classList.toggle('hidden');
+                }
+            }
+            
+            document.addEventListener('DOMContentLoaded', function() {
+                const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+                const sidebarOverlay = document.getElementById('sidebar-overlay');
+                
+                if (mobileMenuBtn) {
+                    mobileMenuBtn.addEventListener('click', toggleSidebar);
+                }
+                if (sidebarOverlay) {
+                    sidebarOverlay.addEventListener('click', toggleSidebar);
+                }
+                
+                // Close sidebar when clicking a link on mobile
+                const sidebarLinks = document.querySelectorAll('#sidebar a');
+                sidebarLinks.forEach(link => {
+                    link.addEventListener('click', () => {
+                        if (window.innerWidth < 768) {
+                            toggleSidebar();
+                        }
+                    });
+                });
+            });
+        </script>
+    </th:block>
+</body>
+</html>
+

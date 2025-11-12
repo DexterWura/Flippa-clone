@@ -117,5 +117,20 @@ public class AdminService {
             .filter(value -> value != null && !value.trim().isEmpty())
             .orElse("Flippa Clone");
     }
+    
+    /**
+     * Checks if auto-approve for listings is enabled.
+     * Defaults to false if not configured.
+     */
+    public boolean isAutoApproveEnabled() {
+        return systemConfigRepository.findByConfigKey("listing.auto-approve.enabled")
+            .map(config -> {
+                if (config.getEnabled() && "true".equalsIgnoreCase(config.getConfigValue())) {
+                    return true;
+                }
+                return false;
+            })
+            .orElse(false);
+    }
 }
 

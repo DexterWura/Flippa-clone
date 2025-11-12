@@ -63,6 +63,27 @@ public class DataInitializer implements CommandLineRunner {
                 config.setConfigType("STRING");
                 return systemConfigRepository.save(config);
             });
+        
+        // Ensure auto-approve is enabled by default
+        systemConfigRepository.findByConfigKey("listing.auto-approve.enabled")
+            .ifPresentOrElse(config -> {
+                // Update to enabled if it's disabled
+                if (!config.getEnabled() || !"true".equalsIgnoreCase(config.getConfigValue())) {
+                    config.setConfigValue("true");
+                    config.setEnabled(true);
+                    systemConfigRepository.save(config);
+                    logger.info("Enabled auto-approve for listings");
+                }
+            }, () -> {
+                SystemConfig config = new SystemConfig();
+                config.setConfigKey("listing.auto-approve.enabled");
+                config.setConfigValue("true");
+                config.setDescription("Auto-approve listings without admin review");
+                config.setEnabled(true);
+                config.setConfigType("BOOLEAN");
+                systemConfigRepository.save(config);
+                logger.info("Created auto-approve config (enabled)");
+            });
     }
     
     private void fixAdminUsers() {

@@ -25,15 +25,18 @@ public class ListingService {
     private final WebsiteInfoRepository websiteInfoRepository;
     private final WebsiteInfoFetchService websiteInfoFetchService;
     private final AuditLogService auditLogService;
+    private final AdminService adminService;
     
     public ListingService(ListingRepository listingRepository, 
                          WebsiteInfoRepository websiteInfoRepository,
                          WebsiteInfoFetchService websiteInfoFetchService,
-                         AuditLogService auditLogService) {
+                         AuditLogService auditLogService,
+                         AdminService adminService) {
         this.listingRepository = listingRepository;
         this.websiteInfoRepository = websiteInfoRepository;
         this.websiteInfoFetchService = websiteInfoFetchService;
         this.auditLogService = auditLogService;
+        this.adminService = adminService;
     }
     
     @Transactional
@@ -50,7 +53,17 @@ public class ListingService {
         listing.setImageUrl(listingDTO.getImageUrl());
         listing.setCategory(listingDTO.getCategory());
         listing.setFeatured(listingDTO.getFeatured() != null ? listingDTO.getFeatured() : false);
-        listing.setStatus(Listing.ListingStatus.DRAFT);
+        
+        // Check if auto-approve is enabled
+        boolean autoApprove = adminService.isAutoApproveEnabled();
+        if (autoApprove) {
+            listing.setStatus(Listing.ListingStatus.ACTIVE);
+            logger.info("Listing auto-approved and set to ACTIVE (auto-approve enabled)");
+        } else {
+            listing.setStatus(Listing.ListingStatus.PENDING_REVIEW);
+            logger.info("Listing set to PENDING_REVIEW (auto-approve disabled - requires admin approval)");
+        }
+        
         listing.setAuctionEndDate(listingDTO.getAuctionEndDate());
         
         Listing savedListing = listingRepository.save(listing);

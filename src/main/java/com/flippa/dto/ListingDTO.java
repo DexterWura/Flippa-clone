@@ -1,6 +1,7 @@
 package com.flippa.dto;
 
 import com.flippa.entity.Listing;
+import com.flippa.validation.ConditionalWebsiteUrl;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -15,6 +16,7 @@ import java.time.LocalDateTime;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@ConditionalWebsiteUrl
 public class ListingDTO {
     
     private Long id;
