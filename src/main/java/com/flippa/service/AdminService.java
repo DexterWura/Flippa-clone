@@ -106,5 +106,16 @@ public class AdminService {
         dto.setConfigType(config.getConfigType());
         return dto;
     }
+    
+    /**
+     * Gets the system name from configuration.
+     * Falls back to "Flippa Clone" if not configured.
+     */
+    public String getSystemName() {
+        return systemConfigRepository.findByConfigKey("system.name")
+            .map(SystemConfig::getConfigValue)
+            .filter(value -> value != null && !value.trim().isEmpty())
+            .orElse("Flippa Clone");
+    }
 }
 

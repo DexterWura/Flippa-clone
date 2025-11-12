@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title th:text="${listing != null and listing.id != null ? 'Edit Listing - Flippa Clone' : 'Create Listing - Flippa Clone'}">Create Listing - Flippa Clone</title>
+    <title th:text="${listing != null and listing.id != null ? 'Edit Listing - ' + (systemName != null ? systemName : 'Flippa Clone') : 'Create Listing - ' + (systemName != null ? systemName : 'Flippa Clone')}">Create Listing - Flippa Clone</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" rel="stylesheet" integrity="sha512-+2oS4N3H/7Jf3+Z2Z4zJ3Lk3C2m2lQ1H0E3uGgq0lq9Cq1lQ0v2O1bq4gCqvP2VJmYxZq8f2m7h4L1Yh9ZpY1w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
@@ -14,7 +14,7 @@
             <div class="flex items-center justify-between h-16">
                 <a href="/" class="flex items-center space-x-2">
                     <i class="fas fa-store text-blue-600"></i>
-                    <span class="font-extrabold text-xl tracking-wide">Flippa Clone</span>
+                    <span class="font-extrabold text-xl tracking-wide" th:text="${systemName != null ? systemName : 'Flippa Clone'}">Flippa Clone</span>
                 </a>
                 <div class="hidden md:flex items-center space-x-6">
                     <a href="/" class="text-gray-700 hover:text-blue-600">Home</a>
@@ -138,7 +138,7 @@
     <footer class="bg-white border-t mt-12 py-8">
         <div class="container mx-auto px-4">
             <div class="text-center text-sm text-gray-600">
-                <span>&copy; <span id="year"></span> Flippa Clone, Inc. All rights reserved.</span>
+                <span>&copy; <span id="year"></span> <span th:text="${systemName != null ? systemName : 'Flippa Clone'}"></span>, Inc. All rights reserved.</span>
             </div>
         </div>
     </footer>

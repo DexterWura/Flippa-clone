@@ -46,7 +46,12 @@ public class CustomUserDetailsService implements UserDetailsService {
     private Collection<? extends GrantedAuthority> getAuthorities(User user) {
         return user.getRoles().stream()
             .filter(role -> role.getEnabled())
-            .map(role -> new SimpleGrantedAuthority(role.getName().name()))
+            .map(role -> {
+                // Role enum already has "ROLE_" prefix (e.g., ROLE_ADMIN)
+                // Spring Security's hasAnyRole("ADMIN") will match "ROLE_ADMIN" authority
+                String roleName = role.getName().name();
+                return new SimpleGrantedAuthority(roleName);
+            })
             .collect(Collectors.toList());
     }
 }
