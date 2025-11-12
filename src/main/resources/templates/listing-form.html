@@ -34,11 +34,21 @@
     </header>
 
     <!-- Flash Messages -->
-    <div th:if="${success}" class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 mx-4 mt-4" role="alert">
-        <span th:text="${success}"></span>
+    <div th:if="${success}" class="flash-message success" role="alert">
+        <div class="container mx-auto flex items-center justify-between">
+            <span th:text="${success}"></span>
+            <button onclick="this.parentElement.parentElement.remove()" class="ml-4 text-white hover:text-gray-200">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
     </div>
-    <div th:if="${error}" class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mx-4 mt-4" role="alert">
-        <span th:text="${error}"></span>
+    <div th:if="${error}" class="flash-message error" role="alert">
+        <div class="container mx-auto flex items-center justify-between">
+            <span th:text="${error}"></span>
+            <button onclick="this.parentElement.parentElement.remove()" class="ml-4 text-white hover:text-gray-200">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
     </div>
 
     <div class="flex" style="height: calc(100vh - 3.5rem);">
@@ -125,13 +135,64 @@
                             <option value="ECOMMERCE_STORE">E-commerce Store</option>
                             <option value="OTHER">Other</option>
                         </select>
+                        <p class="text-sm text-gray-500 mt-1" id="verificationNotice" style="display: none;">
+                            <i class="fas fa-info-circle"></i> Website and Domain listings require ownership verification before activation.
+                        </p>
                     </div>
                     
                     <div>
-                        <label for="price" class="block text-sm font-medium text-gray-700 mb-2">Price ($)</label>
+                        <label for="categoryId" class="block text-sm font-medium text-gray-700 mb-2">Category <span class="text-red-600">*</span></label>
+                        <select id="categoryId" th:field="*{categoryId}" required
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-transparent outline-none">
+                            <option value="">Select a category</option>
+                            <option th:each="cat : ${categories}" th:value="${cat.id}" th:text="${cat.name}"></option>
+                        </select>
+                        <div th:if="${#fields.hasErrors('categoryId')}" th:errors="*{categoryId}" class="text-red-600 text-sm mt-1"></div>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Listing Mode <span class="text-red-600">*</span></label>
+                        <div class="flex gap-4">
+                            <label class="flex items-center">
+                                <input type="radio" th:field="*{listingMode}" value="NORMAL" class="mr-2" checked>
+                                <span>Normal Listing</span>
+                            </label>
+                            <label class="flex items-center">
+                                <input type="radio" th:field="*{listingMode}" value="AUCTION" class="mr-2" id="auctionMode">
+                                <span>Auction</span>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div id="normalPriceSection">
+                        <label for="price" class="block text-sm font-medium text-gray-700 mb-2">Price ($) <span class="text-red-600">*</span></label>
                         <input type="number" step="0.01" id="price" th:field="*{price}" required
                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-transparent outline-none">
                         <div th:if="${#fields.hasErrors('price')}" th:errors="*{price}" class="text-red-600 text-sm mt-1"></div>
+                    </div>
+                    
+                    <div id="auctionSection" style="display: none;">
+                        <div class="mb-4">
+                            <label for="startingBid" class="block text-sm font-medium text-gray-700 mb-2">Starting Bid ($) <span class="text-red-600">*</span></label>
+                            <input type="number" step="0.01" id="startingBid" th:field="*{startingBid}"
+                                   class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-transparent outline-none">
+                            <div th:if="${#fields.hasErrors('startingBid')}" th:errors="*{startingBid}" class="text-red-600 text-sm mt-1"></div>
+                        </div>
+                        <div>
+                            <label for="auctionDays" class="block text-sm font-medium text-gray-700 mb-2">Auction Duration (Days) <span class="text-red-600">*</span></label>
+                            <input type="number" min="1" max="30" id="auctionDays" th:field="*{auctionDays}"
+                                   class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-transparent outline-none"
+                                   placeholder="Enter number of days (1-30)">
+                            <div th:if="${#fields.hasErrors('auctionDays')}" th:errors="*{auctionDays}" class="text-red-600 text-sm mt-1"></div>
+                            <p class="text-sm text-gray-500 mt-1">Auction will end automatically after the specified number of days</p>
+                        </div>
+                        <div class="mt-4">
+                            <label for="price" class="block text-sm font-medium text-gray-700 mb-2">Buy Now Price ($) <span class="text-gray-500">(Optional)</span></label>
+                            <input type="number" step="0.01" id="priceAuction" th:field="*{price}"
+                                   class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-transparent outline-none"
+                                   placeholder="Optional: Set a buy now price">
+                            <p class="text-sm text-gray-500 mt-1">Buyers can purchase immediately at this price</p>
+                        </div>
                     </div>
                     
                     <div>
@@ -146,16 +207,63 @@
                         <p id="websiteUrlHelp" class="text-sm text-gray-500 mt-1 hidden">Website URL is required for Website and Domain listings</p>
                     </div>
                     
-                    <div>
-                        <label for="imageUrl" class="block text-sm font-medium text-gray-700 mb-2">Image URL (Optional)</label>
-                        <input type="url" id="imageUrl" th:field="*{imageUrl}"
-                               class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-transparent outline-none">
+                    <!-- Image Upload Section -->
+                    <div th:if="${listing != null and listing.id != null}">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Listing Images</label>
+                        <div class="border-2 border-dashed border-gray-300 rounded-lg p-6">
+                            <form th:action="@{'/my-listings/' + ${listing.id} + '/images'}" method="post" enctype="multipart/form-data" class="mb-4">
+                                <div class="flex gap-4 items-end">
+                                    <div class="flex-1">
+                                        <input type="file" name="file" accept="image/*" required
+                                               class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-transparent outline-none">
+                                        <p class="text-xs text-gray-500 mt-1">Max 10MB. Allowed: JPEG, PNG, GIF, WebP</p>
+                                    </div>
+                                    <div>
+                                        <label class="flex items-center">
+                                            <input type="checkbox" name="isPrimary" value="true" class="mr-2">
+                                            <span class="text-sm">Set as primary</span>
+                                        </label>
+                                    </div>
+                                    <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+                                        <i class="fas fa-upload mr-2"></i>Upload
+                                    </button>
+                                </div>
+                            </form>
+                            
+                            <!-- Existing Images -->
+                            <div th:if="${images != null and !images.isEmpty()}" class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4">
+                                <div th:each="img : ${images}" class="relative border rounded-lg overflow-hidden">
+                                    <img th:src="@{'/images/' + ${img.filePath}}" alt="Listing image" class="w-full h-32 object-cover">
+                                    <div th:if="${img.isPrimary}" class="absolute top-2 left-2 bg-blue-600 text-white px-2 py-1 rounded text-xs">
+                                        Primary
+                                    </div>
+                                    <div class="absolute bottom-0 left-0 right-0 bg-black bg-opacity-50 p-2 flex gap-2">
+                                        <form th:if="${!img.isPrimary}" th:action="@{'/my-listings/' + ${listing.id} + '/images/' + ${img.id} + '/set-primary'}" method="post" class="flex-1">
+                                            <button type="submit" class="w-full text-xs bg-blue-600 text-white px-2 py-1 rounded hover:bg-blue-700">
+                                                Set Primary
+                                            </button>
+                                        </form>
+                                        <form th:action="@{'/my-listings/' + ${listing.id} + '/images/' + ${img.id} + '/delete'}" method="post" class="flex-1">
+                                            <button type="submit" class="w-full text-xs bg-red-600 text-white px-2 py-1 rounded hover:bg-red-700"
+                                                    onclick="return confirm('Are you sure you want to delete this image?')">
+                                                Delete
+                                            </button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                            <p th:if="${images == null or images.isEmpty()}" class="text-sm text-gray-500 text-center py-4">
+                                No images uploaded yet. Upload images to make your listing more attractive.
+                            </p>
+                        </div>
                     </div>
                     
-                    <div>
-                        <label for="category" class="block text-sm font-medium text-gray-700 mb-2">Category (Optional)</label>
-                        <input type="text" id="category" th:field="*{category}"
+                    <!-- Legacy Image URL (for backward compatibility) -->
+                    <div th:if="${listing == null or listing.id == null}">
+                        <label for="imageUrl" class="block text-sm font-medium text-gray-700 mb-2">Image URL (Optional - Legacy)</label>
+                        <input type="url" id="imageUrl" th:field="*{imageUrl}"
                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-transparent outline-none">
+                        <p class="text-sm text-gray-500 mt-1">You can upload images after creating the listing</p>
                     </div>
                     
                     <div class="flex gap-4">

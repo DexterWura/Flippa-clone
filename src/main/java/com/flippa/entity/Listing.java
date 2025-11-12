@@ -9,6 +9,8 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "listings")
@@ -52,10 +54,15 @@ public class Listing {
     private String websiteUrl;
     
     @Column(length = 500)
-    private String imageUrl;
+    private String imageUrl; // Deprecated - use listingImages instead
     
-    @Column(length = 50)
-    private String category;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "category_id")
+    private Category category;
+    
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private ListingMode listingMode = ListingMode.NORMAL;
     
     @Column(nullable = false)
     private Boolean featured = false;
@@ -68,6 +75,15 @@ public class Listing {
     
     @OneToOne(mappedBy = "listing", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private WebsiteInfo websiteInfo;
+    
+    @OneToMany(mappedBy = "listing", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    private List<ListingImage> listingImages = new ArrayList<>();
+    
+    @OneToOne(mappedBy = "listing", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    private DomainVerification domainVerification;
+    
+    @OneToOne(mappedBy = "listing", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    private SocialMediaVerification socialMediaVerification;
     
     @CreationTimestamp
     @Column(nullable = false, updatable = false)
@@ -96,6 +112,11 @@ public class Listing {
         SOLD,
         CANCELLED,
         SUSPENDED
+    }
+    
+    public enum ListingMode {
+        NORMAL,
+        AUCTION
     }
 }
 

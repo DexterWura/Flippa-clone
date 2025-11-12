@@ -37,3 +37,41 @@
     background: rgba(255, 255, 255, 0.5);
 }
 
+/* Flash message positioning - ensure it appears above nav and header */
+.flash-message {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 9999;
+    margin: 0;
+    border-radius: 0;
+    padding: 1rem 1.5rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.flash-message.success {
+    background-color: #10b981;
+    color: white;
+}
+
+.flash-message.error {
+    background-color: #ef4444;
+    color: white;
+}
+
+.flash-message.info {
+    background-color: #3b82f6;
+    color: white;
+}
+
+.flash-message.warning {
+    background-color: #f59e0b;
+    color: white;
+}
+
+/* Adjust body padding when flash message is visible */
+body.has-flash-message {
+    padding-top: 3.5rem;
+}
+

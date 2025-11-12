@@ -1,10 +1,12 @@
 package com.flippa.controller;
 
+import com.flippa.entity.Category;
 import com.flippa.entity.Escrow;
 import com.flippa.entity.Listing;
 import com.flippa.entity.SystemConfig;
 import com.flippa.entity.User;
 import com.flippa.service.AdminService;
+import com.flippa.service.CategoryService;
 import com.flippa.service.EscrowService;
 import com.flippa.service.ListingService;
 import com.flippa.service.UserService;
@@ -27,13 +29,16 @@ public class AdminController {
     private final UserService userService;
     private final ListingService listingService;
     private final EscrowService escrowService;
+    private final CategoryService categoryService;
     
     public AdminController(AdminService adminService, UserService userService,
-                          ListingService listingService, EscrowService escrowService) {
+                          ListingService listingService, EscrowService escrowService,
+                          CategoryService categoryService) {
         this.adminService = adminService;
         this.userService = userService;
         this.listingService = listingService;
         this.escrowService = escrowService;
+        this.categoryService = categoryService;
     }
     
     @GetMapping
@@ -215,6 +220,57 @@ public class AdminController {
             redirectAttributes.addFlashAttribute("error", "Failed to toggle setting: " + e.getMessage());
         }
         return "redirect:/admin/settings";
+    }
+    
+    @GetMapping("/categories")
+    public String categories(Model model) {
+        model.addAttribute("categories", categoryService.getAllCategories());
+        return "admin/categories";
+    }
+    
+    @PostMapping("/categories/create")
+    public String createCategory(@RequestParam String name, @RequestParam(required = false) String description,
+                                 @RequestParam(required = false) Integer displayOrder,
+                                 Authentication authentication, HttpServletRequest request,
+                                 RedirectAttributes redirectAttributes) {
+        try {
+            User admin = getCurrentUser(authentication);
+            categoryService.createCategory(name, description, displayOrder, admin, request);
+            redirectAttributes.addFlashAttribute("success", "Category created successfully.");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "Failed to create category: " + e.getMessage());
+        }
+        return "redirect:/admin/categories";
+    }
+    
+    @PostMapping("/categories/{id}/update")
+    public String updateCategory(@PathVariable Long id, @RequestParam String name,
+                                 @RequestParam(required = false) String description,
+                                 @RequestParam(required = false) Integer displayOrder,
+                                 @RequestParam(required = false) Boolean enabled,
+                                 Authentication authentication, HttpServletRequest request,
+                                 RedirectAttributes redirectAttributes) {
+        try {
+            User admin = getCurrentUser(authentication);
+            categoryService.updateCategory(id, name, description, displayOrder, enabled, admin, request);
+            redirectAttributes.addFlashAttribute("success", "Category updated successfully.");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "Failed to update category: " + e.getMessage());
+        }
+        return "redirect:/admin/categories";
+    }
+    
+    @PostMapping("/categories/{id}/delete")
+    public String deleteCategory(@PathVariable Long id, Authentication authentication,
+                                HttpServletRequest request, RedirectAttributes redirectAttributes) {
+        try {
+            User admin = getCurrentUser(authentication);
+            categoryService.deleteCategory(id, admin, request);
+            redirectAttributes.addFlashAttribute("success", "Category deleted successfully.");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "Failed to delete category: " + e.getMessage());
+        }
+        return "redirect:/admin/categories";
     }
     
     private User getCurrentUser(Authentication authentication) {

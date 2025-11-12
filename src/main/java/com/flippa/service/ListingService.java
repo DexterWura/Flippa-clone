@@ -2,9 +2,12 @@ package com.flippa.service;
 
 import com.flippa.dto.ListingDTO;
 import com.flippa.dto.WebsiteInfoDTO;
+import com.flippa.entity.Category;
 import com.flippa.entity.Listing;
+import com.flippa.entity.ListingImage;
 import com.flippa.entity.User;
 import com.flippa.entity.WebsiteInfo;
+import com.flippa.repository.CategoryRepository;
 import com.flippa.repository.ListingRepository;
 import com.flippa.repository.WebsiteInfoRepository;
 import jakarta.servlet.http.HttpServletRequest;
@@ -23,17 +26,20 @@ public class ListingService {
     private static final Logger logger = LoggerFactory.getLogger(ListingService.class);
     private final ListingRepository listingRepository;
     private final WebsiteInfoRepository websiteInfoRepository;
+    private final CategoryRepository categoryRepository;
     private final WebsiteInfoFetchService websiteInfoFetchService;
     private final AuditLogService auditLogService;
     private final AdminService adminService;
     
     public ListingService(ListingRepository listingRepository, 
                          WebsiteInfoRepository websiteInfoRepository,
+                         CategoryRepository categoryRepository,
                          WebsiteInfoFetchService websiteInfoFetchService,
                          AuditLogService auditLogService,
                          AdminService adminService) {
         this.listingRepository = listingRepository;
         this.websiteInfoRepository = websiteInfoRepository;
+        this.categoryRepository = categoryRepository;
         this.websiteInfoFetchService = websiteInfoFetchService;
         this.auditLogService = auditLogService;
         this.adminService = adminService;
@@ -51,20 +57,54 @@ public class ListingService {
         listing.setCurrentBid(listingDTO.getCurrentBid());
         listing.setWebsiteUrl(listingDTO.getWebsiteUrl());
         listing.setImageUrl(listingDTO.getImageUrl());
-        listing.setCategory(listingDTO.getCategory());
         listing.setFeatured(listingDTO.getFeatured() != null ? listingDTO.getFeatured() : false);
+        listing.setListingMode(listingDTO.getListingMode() != null ? listingDTO.getListingMode() : Listing.ListingMode.NORMAL);
         
-        // Check if auto-approve is enabled
-        boolean autoApprove = adminService.isAutoApproveEnabled();
-        if (autoApprove) {
-            listing.setStatus(Listing.ListingStatus.ACTIVE);
-            logger.info("Listing auto-approved and set to ACTIVE (auto-approve enabled)");
-        } else {
-            listing.setStatus(Listing.ListingStatus.PENDING_REVIEW);
-            logger.info("Listing set to PENDING_REVIEW (auto-approve disabled - requires admin approval)");
+        // Set category
+        if (listingDTO.getCategoryId() != null) {
+            Category category = categoryRepository.findById(listingDTO.getCategoryId())
+                .orElseThrow(() -> new RuntimeException("Category not found"));
+            listing.setCategory(category);
         }
         
-        listing.setAuctionEndDate(listingDTO.getAuctionEndDate());
+        // Handle auction mode
+        if (listing.getListingMode() == Listing.ListingMode.AUCTION) {
+            if (listingDTO.getStartingBid() == null) {
+                throw new RuntimeException("Starting bid is required for auction listings");
+            }
+            listing.setStartingBid(listingDTO.getStartingBid());
+            listing.setCurrentBid(listingDTO.getStartingBid());
+            
+            // Calculate auction end date
+            if (listingDTO.getAuctionDays() != null && listingDTO.getAuctionDays() > 0) {
+                listing.setAuctionEndDate(java.time.LocalDateTime.now().plusDays(listingDTO.getAuctionDays()));
+            } else {
+                throw new RuntimeException("Auction days must be specified for auction listings");
+            }
+        } else {
+            listing.setAuctionEndDate(listingDTO.getAuctionEndDate());
+        }
+        
+        // For WEBSITE and DOMAIN types, require verification before activation
+        boolean requiresVerification = listingDTO.getType() == Listing.ListingType.WEBSITE || 
+                                       listingDTO.getType() == Listing.ListingType.DOMAIN;
+        
+        if (requiresVerification) {
+            // Listing must be verified before it can be active
+            listing.setStatus(Listing.ListingStatus.DRAFT);
+            listing.setVerified(false);
+            logger.info("Listing set to DRAFT - requires domain/website verification");
+        } else {
+            // Check if auto-approve is enabled
+            boolean autoApprove = adminService.isAutoApproveEnabled();
+            if (autoApprove) {
+                listing.setStatus(Listing.ListingStatus.ACTIVE);
+                logger.info("Listing auto-approved and set to ACTIVE (auto-approve enabled)");
+            } else {
+                listing.setStatus(Listing.ListingStatus.PENDING_REVIEW);
+                logger.info("Listing set to PENDING_REVIEW (auto-approve disabled - requires admin approval)");
+            }
+        }
         
         Listing savedListing = listingRepository.save(listing);
         
@@ -125,7 +165,28 @@ public class ListingService {
         listing.setPrice(listingDTO.getPrice());
         listing.setWebsiteUrl(listingDTO.getWebsiteUrl());
         listing.setImageUrl(listingDTO.getImageUrl());
-        listing.setCategory(listingDTO.getCategory());
+        
+        // Update category
+        if (listingDTO.getCategoryId() != null) {
+            Category category = categoryRepository.findById(listingDTO.getCategoryId())
+                .orElseThrow(() -> new RuntimeException("Category not found"));
+            listing.setCategory(category);
+        } else {
+            listing.setCategory(null);
+        }
+        
+        // Update listing mode and auction settings
+        if (listingDTO.getListingMode() != null) {
+            listing.setListingMode(listingDTO.getListingMode());
+            if (listingDTO.getListingMode() == Listing.ListingMode.AUCTION) {
+                if (listingDTO.getStartingBid() != null) {
+                    listing.setStartingBid(listingDTO.getStartingBid());
+                }
+                if (listingDTO.getAuctionDays() != null && listingDTO.getAuctionDays() > 0) {
+                    listing.setAuctionEndDate(java.time.LocalDateTime.now().plusDays(listingDTO.getAuctionDays()));
+                }
+            }
+        }
         
         Listing updatedListing = listingRepository.save(listing);
         
@@ -160,13 +221,27 @@ public class ListingService {
         dto.setCurrentBid(listing.getCurrentBid());
         dto.setWebsiteUrl(listing.getWebsiteUrl());
         dto.setImageUrl(listing.getImageUrl());
-        dto.setCategory(listing.getCategory());
         dto.setFeatured(listing.getFeatured());
         dto.setStatus(listing.getStatus());
         dto.setSellerId(listing.getSeller().getId());
         dto.setSellerName(listing.getSeller().getFullName());
         dto.setCreatedAt(listing.getCreatedAt());
         dto.setAuctionEndDate(listing.getAuctionEndDate());
+        dto.setListingMode(listing.getListingMode());
+        dto.setVerified(listing.getVerified());
+        dto.setRequiresVerification(listing.getType() == Listing.ListingType.WEBSITE || 
+                                    listing.getType() == Listing.ListingType.DOMAIN);
+        
+        // Set category
+        if (listing.getCategory() != null) {
+            dto.setCategoryId(listing.getCategory().getId());
+            dto.setCategoryName(listing.getCategory().getName());
+        }
+        
+        // Set listing images
+        if (listing.getListingImages() != null && !listing.getListingImages().isEmpty()) {
+            dto.setListingImages(new java.util.ArrayList<>(listing.getListingImages()));
+        }
         
         if (listing.getWebsiteInfo() != null) {
             WebsiteInfoDTO infoDTO = new WebsiteInfoDTO();

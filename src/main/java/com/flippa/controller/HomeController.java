@@ -1,21 +1,29 @@
 package com.flippa.controller;
 
+import com.flippa.dto.ListingDTO;
 import com.flippa.entity.Listing;
+import com.flippa.entity.User;
 import com.flippa.service.ListingService;
+import com.flippa.service.UserService;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
+import java.util.Optional;
 
 @Controller
 public class HomeController {
     
     private final ListingService listingService;
+    private final UserService userService;
     
-    public HomeController(ListingService listingService) {
+    public HomeController(ListingService listingService, UserService userService) {
         this.listingService = listingService;
+        this.userService = userService;
     }
     
     @GetMapping({"/", "/home"})
@@ -42,11 +50,28 @@ public class HomeController {
     }
     
     @GetMapping("/listings/{id}")
-    public String listingDetails(@org.springframework.web.bind.annotation.PathVariable Long id, Model model) {
+    public String listingDetails(@PathVariable Long id, Model model, Authentication authentication) {
         Listing listing = listingService.findById(id)
             .orElseThrow(() -> new RuntimeException("Listing not found"));
         
-        model.addAttribute("listing", listingService.convertToDTO(listing));
+        // Check if current user is the seller
+        boolean isSeller = false;
+        if (authentication != null && authentication.isAuthenticated()) {
+            Optional<User> currentUser = userService.findByEmail(authentication.getName());
+            if (currentUser.isPresent() && currentUser.get().getId().equals(listing.getSeller().getId())) {
+                isSeller = true;
+            }
+        }
+        
+        ListingDTO listingDTO = listingService.convertToDTO(listing);
+        model.addAttribute("listing", listingDTO);
+        model.addAttribute("isSeller", isSeller);
+        
+        // Add images separately for template access
+        if (listing.getListingImages() != null && !listing.getListingImages().isEmpty()) {
+            model.addAttribute("listingImages", listing.getListingImages());
+        }
+        
         return "listing-details";
     }
 }

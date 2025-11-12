@@ -46,6 +46,12 @@ spring:
     prefix: classpath:/templates/
     suffix: .html
     mode: HTML
+  
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 10MB
+      max-request-size: 50MB
 
 server:
   port: 80
@@ -86,4 +92,11 @@ app:
   # Error handling
   error:
     show-details: ${SHOW_ERROR_DETAILS:true} # Set to false in production
+  
+  # File upload settings
+  upload:
+    directory: ${UPLOAD_DIR:./uploads}
+    max-file-size: 10MB
+    max-request-size: 50MB
+    allowed-image-types: image/jpeg,image/png,image/gif,image/webp
 
