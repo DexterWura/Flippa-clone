@@ -123,6 +123,9 @@
                             </div>
                         </div>
                     </div>
+                    <div th:if="${featuredListings == null or featuredListings.isEmpty()}" class="col-span-full text-center py-12">
+                        <p class="text-gray-500">No featured listings available at the moment.</p>
+                    </div>
                 </div>
             </div>
         </section>
@@ -156,6 +159,9 @@
                                 <a th:href="@{/listings/{id}(id=${listing.id})}" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm">Bid now</a>
                             </div>
                         </div>
+                    </div>
+                    <div th:if="${activeListings == null or activeListings.isEmpty()}" class="col-span-full text-center py-12">
+                        <p class="text-gray-500">No listings available at the moment.</p>
                     </div>
                 </div>
             </div>
