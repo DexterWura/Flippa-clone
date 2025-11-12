@@ -5,25 +5,28 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title th:text="${systemName != null ? 'Login - ' + systemName : 'Login - Flippa Clone'}">Login - Flippa Clone</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" rel="stylesheet" integrity="sha512-+2oS4N3H/7Jf3+Z2Z4zJ3Lk3C2m2lQ1H0E3uGgq0lq9Cq1lQ0v2O1bq4gCqvP2VJmYxZq8f2m7h4L1Yh9ZpY1w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" rel="stylesheet" crossorigin="anonymous" />
+    <link th:href="@{/css/custom.css}" rel="stylesheet" />
 </head>
 <body class="bg-gray-50">
-    <!-- Navbar -->
-    <nav class="bg-white border-b sticky top-0 z-50 backdrop-blur-sm bg-white/95">
-        <div class="container mx-auto px-4">
+    <!-- Modern Navbar -->
+    <nav class="bg-white border-b border-gray-200 sticky top-0 z-50 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-16">
                 <a href="/" class="flex items-center space-x-2">
-                    <i class="fas fa-store text-blue-600"></i>
-                    <span class="font-extrabold text-xl tracking-wide" th:text="${systemName != null ? systemName : 'Flippa Clone'}">Flippa Clone</span>
+                    <div class="w-8 h-8 bg-gradient-to-br from-blue-600 to-blue-700 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-store text-white text-sm"></i>
+                    </div>
+                    <span class="font-bold text-xl text-gray-900" th:text="${systemName != null ? systemName : 'Flippa Clone'}">Flippa Clone</span>
                 </a>
-                <div class="flex items-center space-x-3">
+                <div class="flex items-center space-x-4">
                     <span sec:authorize="!isAuthenticated()">
-                        <a href="/login" class="px-4 py-2 text-blue-600 border border-blue-600 rounded-lg hover:bg-blue-50">Log in</a>
-                        <a href="/register" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">Sign up</a>
+                        <a href="/login" class="text-gray-700 hover:text-blue-600 font-medium transition-colors">Log in</a>
+                        <a href="/register" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium transition-colors shadow-sm">Sign up</a>
                     </span>
                     <span sec:authorize="isAuthenticated()">
                         <form th:action="@{/logout}" method="post" class="inline">
-                            <button type="submit" class="px-4 py-2 text-gray-700 hover:text-blue-600">Logout</button>
+                            <button type="submit" class="text-gray-700 hover:text-blue-600 font-medium transition-colors">Logout</button>
                         </form>
                     </span>
                 </div>
@@ -32,46 +35,70 @@
     </nav>
 
     <!-- Flash Messages -->
-    <div th:if="${success}" class="container mx-auto px-4 mt-4">
-        <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative" role="alert">
+    <div th:if="${success}" class="flash-message success" role="alert">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
             <span th:text="${success}"></span>
-            <button onclick="this.parentElement.remove()" class="absolute top-0 right-0 px-4 py-3">
+            <button onclick="this.parentElement.parentElement.remove()" class="ml-4 text-white hover:text-gray-200">
                 <i class="fas fa-times"></i>
             </button>
         </div>
     </div>
-    <div th:if="${error}" class="container mx-auto px-4 mt-4">
-        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
+    <div th:if="${error}" class="flash-message error" role="alert">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
             <span th:text="${error}"></span>
-            <button onclick="this.parentElement.remove()" class="absolute top-0 right-0 px-4 py-3">
+            <button onclick="this.parentElement.parentElement.remove()" class="ml-4 text-white hover:text-gray-200">
                 <i class="fas fa-times"></i>
             </button>
         </div>
     </div>
 
     <!-- Main Content -->
-    <main>
-        <div class="container mx-auto px-4 py-12">
-            <div class="max-w-md mx-auto">
-                <div class="bg-white rounded-2xl shadow-xl p-8">
-                    <h2 class="text-3xl font-bold text-center mb-8 text-gray-800">Login</h2>
-                    <form th:action="@{/login}" method="post" class="space-y-6">
-                        <div>
-                            <label for="email" class="block text-sm font-medium text-gray-700 mb-2">Email</label>
-                            <input type="email" id="email" name="username" required
-                                   class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-transparent outline-none">
-                        </div>
-                        <div>
-                            <label for="password" class="block text-sm font-medium text-gray-700 mb-2">Password</label>
-                            <input type="password" id="password" name="password" required
-                                   class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-transparent outline-none">
-                        </div>
-                        <button type="submit" class="w-full bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 font-semibold transition-colors">
-                            Login
-                        </button>
-                    </form>
-                    <p class="text-center mt-6 text-gray-600">
-                        Don't have an account? <a href="/register" class="text-blue-600 hover:underline">Register here</a>
+    <main class="min-h-screen bg-gradient-to-br from-gray-50 to-white py-12">
+        <div class="max-w-md mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="bg-white rounded-2xl shadow-2xl p-8 lg:p-10">
+                <div class="text-center mb-8">
+                    <div class="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-blue-600 to-blue-700 rounded-2xl mb-4">
+                        <i class="fas fa-sign-in-alt text-white text-2xl"></i>
+                    </div>
+                    <h2 class="text-3xl font-bold text-gray-900 mb-2">Welcome Back</h2>
+                    <p class="text-gray-600">Sign in to your account to continue</p>
+                </div>
+                
+                <div th:if="${param.error}" class="mb-6 p-4 bg-red-50 border-2 border-red-200 rounded-xl">
+                    <div class="flex items-center">
+                        <i class="fas fa-exclamation-circle text-red-600 mr-2"></i>
+                        <p class="text-red-800 font-medium">Invalid email or password. Please try again.</p>
+                    </div>
+                </div>
+                
+                <form th:action="@{/login}" method="post" class="space-y-6">
+                    <div>
+                        <label for="email" class="block text-sm font-semibold text-gray-700 mb-2">
+                            <i class="fas fa-envelope mr-2 text-blue-600"></i>Email Address
+                        </label>
+                        <input type="email" id="email" name="username" required
+                               class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-600 focus:border-blue-600 outline-none transition-colors"
+                               placeholder="you@example.com">
+                    </div>
+                    <div>
+                        <label for="password" class="block text-sm font-semibold text-gray-700 mb-2">
+                            <i class="fas fa-lock mr-2 text-blue-600"></i>Password
+                        </label>
+                        <input type="password" id="password" name="password" required
+                               class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-600 focus:border-blue-600 outline-none transition-colors"
+                               placeholder="Enter your password">
+                    </div>
+                    <button type="submit" class="w-full bg-gradient-to-r from-blue-600 to-blue-700 text-white px-6 py-4 rounded-xl hover:from-blue-700 hover:to-blue-800 font-bold text-lg transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
+                        <i class="fas fa-sign-in-alt mr-2"></i>Sign In
+                    </button>
+                </form>
+                
+                <div class="mt-8 pt-8 border-t border-gray-200 text-center">
+                    <p class="text-gray-600">
+                        Don't have an account? 
+                        <a href="/register" class="text-blue-600 hover:text-blue-700 font-semibold transition-colors">
+                            Create one here
+                        </a>
                     </p>
                 </div>
             </div>
@@ -79,10 +106,10 @@
     </main>
 
     <!-- Footer -->
-    <footer class="bg-white border-t mt-12 py-8">
-        <div class="container mx-auto px-4">
-            <div class="text-center text-sm text-gray-600">
-                <span>&copy; <span id="year"></span> <span th:text="${systemName != null ? systemName : 'Flippa Clone'}"></span>, Inc. All rights reserved.</span>
+    <footer class="bg-gray-900 text-gray-300 mt-12 py-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="border-t border-gray-800 pt-8 text-center text-sm">
+                <p>&copy; <span id="year"></span> <span th:text="${systemName != null ? systemName : 'Flippa Clone'}"></span>, Inc. All rights reserved.</p>
             </div>
         </div>
     </footer>
