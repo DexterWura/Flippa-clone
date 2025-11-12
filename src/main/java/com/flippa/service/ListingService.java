@@ -90,6 +90,10 @@ public class ListingService {
         return listingRepository.findByStatus(Listing.ListingStatus.ACTIVE);
     }
     
+    public List<Listing> getPendingReviewListings() {
+        return listingRepository.findByStatus(Listing.ListingStatus.PENDING_REVIEW);
+    }
+    
     public List<Listing> getFeaturedListings() {
         return listingRepository.findByFeaturedTrueAndStatus(Listing.ListingStatus.ACTIVE);
     }

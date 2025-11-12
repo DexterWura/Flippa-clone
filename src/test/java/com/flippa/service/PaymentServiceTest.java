@@ -114,10 +114,12 @@ class PaymentServiceTest {
     @Test
     void testInitiatePayment_PayNowZim_Success() {
         // Arrange
-        PaymentInitiationResult initResult = new PaymentInitiationResult();
-        initResult.setSuccess(true);
-        initResult.setRedirectUrl("https://paynow.co.zw/pay");
-        initResult.setPollUrl("https://paynow.co.zw/poll");
+        PaymentInitiationResult initResult = new PaymentInitiationResult(
+            true, 
+            "https://paynow.co.zw/pay", 
+            "https://paynow.co.zw/poll", 
+            null
+        );
 
         when(escrowRepository.findById(1L)).thenReturn(Optional.of(escrow));
         when(adminService.isPaymentGatewayEnabled("paynow-zim")).thenReturn(true);
@@ -206,10 +208,11 @@ class PaymentServiceTest {
     @Test
     void testCheckPayNowPaymentStatus_Paid() {
         // Arrange
-        PaymentStatusResult statusResult = new PaymentStatusResult();
-        statusResult.setRequestSuccess(true);
-        statusResult.setPaid(true);
-        statusResult.setMessage("Payment confirmed");
+        PaymentStatusResult statusResult = new PaymentStatusResult(
+            true, 
+            true, 
+            "Payment confirmed"
+        );
 
         when(paymentRepository.findById(1L)).thenReturn(Optional.of(payment));
         when(payNowZimService.checkPaymentStatus("POLL_URL_123")).thenReturn(statusResult);
