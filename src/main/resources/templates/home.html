@@ -144,7 +144,7 @@
                 </div>
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     <div th:each="listing : ${activeListings}" 
-                         th:if="${listing.type == T(com.flippa.entity.Listing.ListingType).WEBSITE || listing.type == T(com.flippa.entity.Listing.ListingType).SAAS || listing.type == T(com.flippa.entity.Listing.ListingType).ECOMMERCE_STORE}"
+                         th:if="${listing.type.name() == 'WEBSITE' or listing.type.name() == 'SAAS' or listing.type.name() == 'ECOMMERCE_STORE'}"
                          class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-all duration-150 hover:-translate-y-1">
                         <img th:src="${listing.imageUrl != null ? listing.imageUrl : 'https://picsum.photos/seed/' + listing.id + '/600/400'}" 
                              class="w-full h-48 object-cover" alt="Listing image" />
@@ -181,7 +181,7 @@
                 </div>
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     <div th:each="listing : ${activeListings}" 
-                         th:if="${listing.type == T(com.flippa.entity.Listing.ListingType).SOCIAL_MEDIA_ACCOUNT}"
+                         th:if="${listing.type.name() == 'SOCIAL_MEDIA_ACCOUNT'}"
                          class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-all duration-150 hover:-translate-y-1">
                         <img th:src="${listing.imageUrl != null ? listing.imageUrl : 'https://picsum.photos/seed/' + listing.id + '/600/400'}" 
                              class="w-full h-48 object-cover" alt="Listing image" />
@@ -215,7 +215,7 @@
                 </div>
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                     <div th:each="listing : ${activeListings}" 
-                         th:if="${listing.type == T(com.flippa.entity.Listing.ListingType).DOMAIN}"
+                         th:if="${listing.type.name() == 'DOMAIN'}"
                          class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-all duration-150 hover:-translate-y-1">
                         <div class="p-4">
                             <div class="flex items-center justify-between mb-2">
