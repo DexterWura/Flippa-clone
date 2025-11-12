@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -30,8 +30,20 @@
                 </a>
                 <div class="flex items-center space-x-4">
                     <a href="/listings" class="text-gray-700 hover:text-blue-600">Browse</a>
-                    <a href="/login" class="px-4 py-2 text-blue-600 border border-blue-600 rounded-lg hover:bg-blue-50">Log in</a>
-                    <a href="/register" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">Sign up</a>
+                    <span sec:authorize="!isAuthenticated()">
+                        <a href="/login" class="px-4 py-2 text-blue-600 border border-blue-600 rounded-lg hover:bg-blue-50">Log in</a>
+                        <a href="/register" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">Sign up</a>
+                    </span>
+                    <span sec:authorize="isAuthenticated()">
+                        <a href="/my-listings" class="text-gray-700 hover:text-blue-600">My Listings</a>
+                        <a href="/escrow/my-escrows" class="text-gray-700 hover:text-blue-600">My Escrows</a>
+                        <span sec:authorize="hasAnyRole('ADMIN', 'SUPER_ADMIN')">
+                            <a href="/admin" class="text-gray-700 hover:text-blue-600">Admin</a>
+                        </span>
+                        <form th:action="@{/logout}" method="post" class="inline">
+                            <button type="submit" class="px-4 py-2 text-gray-700 hover:text-blue-600">Logout</button>
+                        </form>
+                    </span>
                 </div>
             </div>
         </div>
