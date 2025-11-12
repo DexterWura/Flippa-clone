@@ -1,10 +1,67 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: layout(~{::title}, ~{::content})}">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Manage Listings - Flippa Clone</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" rel="stylesheet" integrity="sha512-+2oS4N3H/7Jf3+Z2Z4zJ3Lk3C2m2lQ1H0E3uGgq0lq9Cq1lQ0v2O1bq4gCqvP2VJmYxZq8f2m7h4L1Yh9ZpY1w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
-<body>
-    <div th:fragment="content">
+<body class="bg-gray-50">
+    <!-- Navbar -->
+    <nav class="bg-white border-b sticky top-0 z-50 backdrop-blur-sm bg-white/95">
+        <div class="container mx-auto px-4">
+            <div class="flex items-center justify-between h-16">
+                <a href="/" class="flex items-center space-x-2">
+                    <i class="fas fa-store text-blue-600"></i>
+                    <span class="font-extrabold text-xl tracking-wide">Flippa Clone</span>
+                </a>
+                <div class="hidden md:flex items-center space-x-6">
+                    <a href="/" class="text-gray-700 hover:text-blue-600">Home</a>
+                    <a href="/listings" class="text-gray-700 hover:text-blue-600">Browse Listings</a>
+                    <span sec:authorize="isAuthenticated()">
+                        <a href="/my-listings" class="text-gray-700 hover:text-blue-600">My Listings</a>
+                        <a href="/escrow/my-escrows" class="text-gray-700 hover:text-blue-600">My Escrows</a>
+                    </span>
+                    <span sec:authorize="hasAnyRole('ADMIN', 'SUPER_ADMIN')">
+                        <a href="/admin" class="text-gray-700 hover:text-blue-600">Admin</a>
+                    </span>
+                </div>
+                <div class="flex items-center space-x-3">
+                    <span sec:authorize="!isAuthenticated()">
+                        <a href="/login" class="px-4 py-2 text-blue-600 border border-blue-600 rounded-lg hover:bg-blue-50">Log in</a>
+                        <a href="/register" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">Sign up</a>
+                    </span>
+                    <span sec:authorize="isAuthenticated()">
+                        <form th:action="@{/logout}" method="post" class="inline">
+                            <button type="submit" class="px-4 py-2 text-gray-700 hover:text-blue-600">Logout</button>
+                        </form>
+                    </span>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Flash Messages -->
+    <div th:if="${success}" class="container mx-auto px-4 mt-4">
+        <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative" role="alert">
+            <span th:text="${success}"></span>
+            <button onclick="this.parentElement.remove()" class="absolute top-0 right-0 px-4 py-3">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+    </div>
+    <div th:if="${error}" class="container mx-auto px-4 mt-4">
+        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
+            <span th:text="${error}"></span>
+            <button onclick="this.parentElement.remove()" class="absolute top-0 right-0 px-4 py-3">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <main>
         <div class="container mx-auto px-4 py-8">
             <h2 class="text-4xl font-extrabold text-[#1f2a44] mb-8">Manage Listings</h2>
             
@@ -22,18 +79,18 @@
                             </tr>
                         </thead>
                         <tbody class="bg-white divide-y divide-gray-200">
-                            <tr th:each="listing : ${listings}">
+                            <tr th:each="listing : ${listings != null ? listings : {}}">
                                 <td class="px-6 py-4 whitespace-nowrap" th:text="${listing.id}"></td>
                                 <td class="px-6 py-4" th:text="${listing.title}"></td>
-                                <td class="px-6 py-4 whitespace-nowrap" th:text="${listing.seller.fullName}"></td>
-                                <td class="px-6 py-4 whitespace-nowrap" th:text="${'$' + #numbers.formatDecimal(listing.price, 0, 'COMMA', 2, 'POINT')}"></td>
+                                <td class="px-6 py-4 whitespace-nowrap" th:text="${listing.seller != null and listing.seller.fullName != null ? listing.seller.fullName : 'N/A'}"></td>
+                                <td class="px-6 py-4 whitespace-nowrap" th:text="${listing.price != null ? '$' + #numbers.formatDecimal(listing.price, 0, 'COMMA', 2, 'POINT') : '$0'}"></td>
                                 <td class="px-6 py-4 whitespace-nowrap">
-                                    <span th:classappend="${listing.status == 'ACTIVE' ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-700'}" 
-                                          class="px-2 py-1 rounded-full text-xs font-semibold" th:text="${listing.status}"></span>
+                                    <span th:if="${listing.status != null}" th:classappend="${listing.status.name() == 'ACTIVE' ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-700'}" 
+                                          class="px-2 py-1 rounded-full text-xs font-semibold" th:text="${listing.status.name()}"></span>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <a th:href="@{/listings/{id}(id=${listing.id})}" class="px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700 text-sm mr-2">View</a>
-                                    <form th:if="${listing.status != 'ACTIVE'}" th:action="@{/admin/listings/{id}/activate(id=${listing.id})}" method="post" class="inline">
+                                    <form th:if="${listing.status == null or listing.status.name() != 'ACTIVE'}" th:action="@{/admin/listings/{id}/activate(id=${listing.id})}" method="post" class="inline">
                                         <button type="submit" class="px-3 py-1 bg-green-600 text-white rounded hover:bg-green-700 text-sm">
                                             Activate
                                         </button>
@@ -45,7 +102,19 @@
                 </div>
             </div>
         </div>
-    </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t mt-12 py-8">
+        <div class="container mx-auto px-4">
+            <div class="text-center text-sm text-gray-600">
+                <span>&copy; <span id="year"></span> Flippa Clone, Inc. All rights reserved.</span>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        document.getElementById('year').textContent = new Date().getFullYear();
+    </script>
 </body>
 </html>
-
