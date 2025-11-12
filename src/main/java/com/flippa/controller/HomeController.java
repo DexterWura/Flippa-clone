@@ -20,20 +20,11 @@ public class HomeController {
     
     @GetMapping({"/", "/home"})
     public String home(Model model) {
-        try {
-            List<Listing> featuredListings = listingService.getFeaturedListings();
-            List<Listing> activeListings = listingService.getAllActiveListings();
-            
-            model.addAttribute("featuredListings", featuredListings != null ? featuredListings : java.util.Collections.emptyList());
-            model.addAttribute("activeListings", activeListings != null ? activeListings : java.util.Collections.emptyList());
-            return "home";
-        } catch (Exception e) {
-            // Log error and return empty lists
-            org.slf4j.LoggerFactory.getLogger(HomeController.class).error("Error loading home page: {}", e.getMessage(), e);
-            model.addAttribute("featuredListings", java.util.Collections.emptyList());
-            model.addAttribute("activeListings", java.util.Collections.emptyList());
-            return "home";
-        }
+        // Simplified: Don't call service methods that might fail
+        // Home page is now standalone HTML and doesn't need these attributes
+        // model.addAttribute("featuredListings", java.util.Collections.emptyList());
+        // model.addAttribute("activeListings", java.util.Collections.emptyList());
+        return "home";
     }
     
     @GetMapping("/listings")
