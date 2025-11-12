@@ -6,17 +6,7 @@
     <title th:text="${systemName != null ? 'Manage Disputes - ' + systemName : 'Manage Disputes - Flippa Clone'}">Manage Disputes - Flippa Clone</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" rel="stylesheet" integrity="sha512-+2oS4N3H/7Jf3+Z2Z4zJ3Lk3C2m2lQ1H0E3uGgq0lq9Cq1lQ0v2O1bq4gCqvP2VJmYxZq8f2m7h4L1Yh9ZpY1w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <style>
-        @media (max-width: 768px) {
-            .sidebar {
-                transform: translateX(-100%);
-                transition: transform 0.3s ease-in-out;
-            }
-            .sidebar.open {
-                transform: translateX(0);
-            }
-        }
-    </style>
+    <link th:href="@{/css/custom.css}" rel="stylesheet" />
 </head>
 <body class="bg-gray-100">
     <!-- Top Header Bar -->
@@ -156,25 +146,7 @@
         </main>
     </div>
 
-    <script>
-        function toggleSidebar() {
-            const sidebar = document.getElementById('sidebar');
-            const overlay = document.getElementById('sidebar-overlay');
-            sidebar.classList.toggle('open');
-            overlay.classList.toggle('hidden');
-        }
-        
-        document.getElementById('mobile-menu-btn')?.addEventListener('click', toggleSidebar);
-        document.getElementById('sidebar-overlay')?.addEventListener('click', toggleSidebar);
-        
-        // Close sidebar when clicking a link on mobile
-        document.querySelectorAll('#sidebar a').forEach(link => {
-            link.addEventListener('click', () => {
-                if (window.innerWidth < 768) {
-                    toggleSidebar();
-                }
-            });
-        });
-    </script>
+    <script th:src="@{/js/common.js}"></script>
+    <script th:src="@{/js/dashboard.js}"></script>
 </body>
 </html>

@@ -193,38 +193,7 @@
         </div>
     </footer>
 
-    <script>
-        // Typed / rotating words
-        const words = ['online businesses', 'social accounts', 'domains'];
-        const el = document.getElementById('typed');
-        let wordIndex = 0, charIndex = 0, deleting = false;
-        const typeSpeed = 70;
-        const deleteSpeed = 45;
-        const holdTime = 1200;
-
-        function typeLoop() {
-            if (!el) return;
-            const current = words[wordIndex];
-            if (!deleting) {
-                el.textContent = current.slice(0, ++charIndex);
-                if (charIndex === current.length) {
-                    deleting = true;
-                    setTimeout(typeLoop, holdTime);
-                    return;
-                }
-            } else {
-                el.textContent = current.slice(0, --charIndex);
-                if (charIndex === 0) {
-                    deleting = false;
-                    wordIndex = (wordIndex + 1) % words.length;
-                }
-            }
-            setTimeout(typeLoop, deleting ? deleteSpeed : typeSpeed);
-        }
-        if (el) typeLoop();
-        
-        // Set year
-        document.getElementById('year').textContent = new Date().getFullYear();
-    </script>
+    <script th:src="@{/js/common.js}"></script>
+    <script th:src="@{/js/home.js}"></script>
 </body>
 </html>
