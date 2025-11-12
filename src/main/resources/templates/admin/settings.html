@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: layout(~{::title}, ~{::content})}">
+<head>
+    <title>System Settings - Flippa Clone</title>
+</head>
+<body>
+    <div th:fragment="content">
+        <div class="container mx-auto px-4 py-8">
+            <h2 class="text-4xl font-extrabold text-[#1f2a44] mb-8">System Settings</h2>
+            
+            <!-- Payment Gateway Settings Section -->
+            <div class="mb-8">
+                <h3 class="text-2xl font-bold mb-6 text-gray-800">Payment Gateway Settings</h3>
+                
+                <!-- PayPal Settings -->
+                <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+                    <div class="flex items-center justify-between mb-4">
+                        <h4 class="text-xl font-semibold text-gray-800">PayPal</h4>
+                        <form th:action="@{/admin/settings/{key}/toggle(key='payment.gateway.paypal.enabled')}" method="post" class="inline">
+                            <input type="hidden" name="enabled" th:value="${paypalEnabled != null && paypalEnabled.enabled ? 'false' : 'true'}">
+                            <button type="submit" 
+                                    th:classappend="${paypalEnabled != null && paypalEnabled.enabled ? 'bg-green-600 hover:bg-green-700' : 'bg-gray-400 hover:bg-gray-500'}"
+                                    class="px-4 py-2 text-white rounded-lg font-semibold">
+                                <span th:text="${paypalEnabled != null && paypalEnabled.enabled ? 'Enabled' : 'Disabled'}"></span>
+                            </button>
+                        </form>
+                    </div>
+                    
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Client ID</label>
+                            <form th:action="@{/admin/settings/update}" method="post" class="flex gap-2">
+                                <input type="hidden" name="key" value="payment.gateway.paypal.client-id">
+                                <input type="text" name="value" 
+                                       th:value="${paypalClientId != null ? paypalClientId.configValue : ''}"
+                                       class="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-transparent outline-none"
+                                       placeholder="Enter PayPal Client ID">
+                                <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-semibold">
+                                    Save
+                                </button>
+                            </form>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Client Secret</label>
+                            <form th:action="@{/admin/settings/update}" method="post" class="flex gap-2">
+                                <input type="hidden" name="key" value="payment.gateway.paypal.client-secret">
+                                <input type="password" name="value" 
+                                       th:value="${paypalClientSecret != null ? paypalClientSecret.configValue : ''}"
+                                       class="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-transparent outline-none"
+                                       placeholder="Enter PayPal Client Secret">
+                                <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-semibold">
+                                    Save
+                                </button>
+                            </form>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Mode</label>
+                            <form th:action="@{/admin/settings/update}" method="post" class="flex gap-2">
+                                <input type="hidden" name="key" value="payment.gateway.paypal.mode">
+                                <select name="value" 
+                                        class="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-transparent outline-none">
+                                    <option value="sandbox" th:selected="${paypalMode != null && paypalMode.configValue == 'sandbox'}">Sandbox</option>
+                                    <option value="live" th:selected="${paypalMode != null && paypalMode.configValue == 'live'}">Live</option>
+                                </select>
+                                <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-semibold">
+                                    Save
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- PayNow Zim Settings -->
+                <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+                    <div class="flex items-center justify-between mb-4">
+                        <h4 class="text-xl font-semibold text-gray-800">PayNow Zimbabwe</h4>
+                        <form th:action="@{/admin/settings/{key}/toggle(key='payment.gateway.paynow-zim.enabled')}" method="post" class="inline">
+                            <input type="hidden" name="enabled" th:value="${paynowEnabled != null && paynowEnabled.enabled ? 'false' : 'true'}">
+                            <button type="submit" 
+                                    th:classappend="${paynowEnabled != null && paynowEnabled.enabled ? 'bg-green-600 hover:bg-green-700' : 'bg-gray-400 hover:bg-gray-500'}"
+                                    class="px-4 py-2 text-white rounded-lg font-semibold">
+                                <span th:text="${paynowEnabled != null && paynowEnabled.enabled ? 'Enabled' : 'Disabled'}"></span>
+                            </button>
+                        </form>
+                    </div>
+                    
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Integration ID</label>
+                            <form th:action="@{/admin/settings/update}" method="post" class="flex gap-2">
+                                <input type="hidden" name="key" value="payment.gateway.paynow-zim.integration-id">
+                                <input type="text" name="value" 
+                                       th:value="${paynowIntegrationId != null ? paynowIntegrationId.configValue : ''}"
+                                       class="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-transparent outline-none"
+                                       placeholder="Enter PayNow Integration ID">
+                                <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-semibold">
+                                    Save
+                                </button>
+                            </form>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Integration Key</label>
+                            <form th:action="@{/admin/settings/update}" method="post" class="flex gap-2">
+                                <input type="hidden" name="key" value="payment.gateway.paynow-zim.integration-key">
+                                <input type="password" name="value" 
+                                       th:value="${paynowIntegrationKey != null ? paynowIntegrationKey.configValue : ''}"
+                                       class="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-transparent outline-none"
+                                       placeholder="Enter PayNow Integration Key">
+                                <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-semibold">
+                                    Save
+                                </button>
+                            </form>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Return URL</label>
+                            <form th:action="@{/admin/settings/update}" method="post" class="flex gap-2">
+                                <input type="hidden" name="key" value="payment.gateway.paynow-zim.return-url">
+                                <input type="url" name="value" 
+                                       th:value="${paynowReturnUrl != null ? paynowReturnUrl.configValue : 'http://localhost/payment/callback'}"
+                                       class="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-transparent outline-none"
+                                       placeholder="Enter Return URL">
+                                <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-semibold">
+                                    Save
+                                </button>
+                            </form>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Result URL</label>
+                            <form th:action="@{/admin/settings/update}" method="post" class="flex gap-2">
+                                <input type="hidden" name="key" value="payment.gateway.paynow-zim.result-url">
+                                <input type="url" name="value" 
+                                       th:value="${paynowResultUrl != null ? paynowResultUrl.configValue : 'http://localhost/payment/callback'}"
+                                       class="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-transparent outline-none"
+                                       placeholder="Enter Result URL">
+                                <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-semibold">
+                                    Save
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Other System Settings -->
+            <div>
+                <h3 class="text-2xl font-bold mb-6 text-gray-800">Other System Settings</h3>
+                <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full divide-y divide-gray-200">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Key</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Value</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Description</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Enabled</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody class="bg-white divide-y divide-gray-200">
+                                <tr th:each="config : ${configs}" th:if="${!config.configKey.startsWith('payment.gateway.')}">
+                                    <td class="px-6 py-4 whitespace-nowrap font-medium" th:text="${config.configKey}"></td>
+                                    <td class="px-6 py-4" th:text="${config.configValue}"></td>
+                                    <td class="px-6 py-4" th:text="${config.description}"></td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span th:classappend="${config.enabled ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}" 
+                                              class="px-2 py-1 rounded-full text-xs font-semibold" th:text="${config.enabled}"></span>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <form th:action="@{/admin/settings/{key}/toggle(key=${config.configKey})}" method="post" class="inline mr-2">
+                                            <input type="hidden" name="enabled" th:value="${!config.enabled}">
+                                            <button type="submit" class="px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700 text-sm">
+                                                <span th:text="${config.enabled ? 'Disable' : 'Enable'}"></span>
+                                            </button>
+                                        </form>
+                                        <form th:action="@{/admin/settings/update}" method="post" class="inline">
+                                            <input type="hidden" name="key" th:value="${config.configKey}">
+                                            <input type="text" name="value" th:value="${config.configValue}" required
+                                                   class="px-2 py-1 border border-gray-300 rounded text-sm mr-2">
+                                            <button type="submit" class="px-3 py-1 bg-gray-600 text-white rounded hover:bg-gray-700 text-sm">
+                                                Update
+                                            </button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: layout(~{::title}, ~{::content})}">
+<head>
+    <title>Escrow Details - Flippa Clone</title>
+</head>
+<body>
+    <div th:fragment="content">
+        <div class="container mx-auto px-4 py-8">
+            <h2 class="text-4xl font-extrabold text-[#1f2a44] mb-8">Escrow Details</h2>
+            
+            <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+                <h5 class="text-xl font-bold mb-4">Listing: <span th:text="${escrow.listingTitle}"></span></h5>
+                <div class="grid md:grid-cols-2 gap-4">
+                    <p><strong>Amount:</strong> <span class="text-2xl font-bold text-blue-600" th:text="${'$' + #numbers.formatDecimal(escrow.amount, 0, 'COMMA', 2, 'POINT')}"></span></p>
+                    <p><strong>Status:</strong> <span class="px-3 py-1 bg-gray-100 rounded-full text-sm font-semibold" th:text="${escrow.status}"></span></p>
+                    <p><strong>Buyer:</strong> <span th:text="${escrow.buyerName}"></span></p>
+                    <p><strong>Seller:</strong> <span th:text="${escrow.sellerName}"></span></p>
+                </div>
+            </div>
+            
+            <div th:if="${escrow.status == 'PENDING_PAYMENT'}" class="bg-white rounded-lg shadow-md p-6 mb-6">
+                <h5 class="text-xl font-bold mb-4">Initiate Payment</h5>
+                <form th:action="@{/payment/initiate}" method="post" class="space-y-4">
+                    <input type="hidden" name="escrowId" th:value="${escrow.id}">
+                    <div>
+                        <label for="gateway" class="block text-sm font-medium text-gray-700 mb-2">Payment Gateway</label>
+                        <select class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-transparent outline-none" 
+                                id="gateway" name="gateway" required>
+                            <option value="PAYPAL">PayPal</option>
+                            <option value="PAYNOW_ZIM">PayNow Zim</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="w-full px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-semibold">
+                        Pay Now
+                    </button>
+                </form>
+            </div>
+            
+            <div th:if="${escrow.disputeRaised}" class="bg-yellow-50 border border-yellow-200 rounded-lg p-6 mb-6">
+                <h5 class="text-xl font-bold text-yellow-800 mb-4">Dispute Raised</h5>
+                <p class="mb-2"><strong>Reason:</strong> <span th:text="${escrow.disputeReason}"></span></p>
+                <div th:if="${escrow.disputeResolution}">
+                    <p><strong>Resolution:</strong> <span th:text="${escrow.disputeResolution}"></span></p>
+                </div>
+            </div>
+            
+            <div th:if="${escrow.status == 'PAYMENT_RECEIVED'}" class="bg-white rounded-lg shadow-md p-6 mb-6">
+                <h5 class="text-xl font-bold mb-4">Raise Dispute</h5>
+                <form th:action="@{/escrow/{id}/dispute(id=${escrow.id})}" method="post" class="space-y-4">
+                    <div>
+                        <label for="reason" class="block text-sm font-medium text-gray-700 mb-2">Dispute Reason</label>
+                        <textarea id="reason" name="reason" rows="3" 
+                                  class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-transparent outline-none"></textarea>
+                    </div>
+                    <button type="submit" class="px-6 py-3 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700 font-semibold">
+                        Raise Dispute
+                    </button>
+                </form>
+            </div>
+            
+            <div th:if="${escrow.status == 'PAYMENT_RECEIVED'}" class="bg-white rounded-lg shadow-md p-6">
+                <h5 class="text-xl font-bold mb-4">Complete Transfer</h5>
+                <form th:action="@{/escrow/{id}/complete(id=${escrow.id})}" method="post">
+                    <button type="submit" class="px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 font-semibold">
+                        Complete Transfer
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

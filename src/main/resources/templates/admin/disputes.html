@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: layout(~{::title}, ~{::content})}">
+<head>
+    <title>Manage Disputes - Flippa Clone</title>
+</head>
+<body>
+    <div th:fragment="content">
+        <div class="container mx-auto px-4 py-8">
+            <h2 class="text-4xl font-extrabold text-[#1f2a44] mb-8">Manage Disputes</h2>
+            
+            <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Listing</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Buyer</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Seller</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Amount</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Reason</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-gray-200">
+                            <tr th:each="dispute : ${disputes}">
+                                <td class="px-6 py-4 whitespace-nowrap" th:text="${dispute.id}"></td>
+                                <td class="px-6 py-4 whitespace-nowrap" th:text="${dispute.listingTitle}"></td>
+                                <td class="px-6 py-4 whitespace-nowrap" th:text="${dispute.buyerName}"></td>
+                                <td class="px-6 py-4 whitespace-nowrap" th:text="${dispute.sellerName}"></td>
+                                <td class="px-6 py-4 whitespace-nowrap" th:text="${'$' + #numbers.formatDecimal(dispute.amount, 0, 'COMMA', 2, 'POINT')}"></td>
+                                <td class="px-6 py-4" th:text="${dispute.disputeReason}"></td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <a th:href="@{/escrow/{id}(id=${dispute.id})}" class="px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700 text-sm mr-2">View</a>
+                                    <form th:action="@{/admin/disputes/{id}/resolve(id=${dispute.id})}" method="post" class="inline">
+                                        <input type="text" name="resolution" placeholder="Resolution" required
+                                               class="px-2 py-1 border border-gray-300 rounded text-sm mb-2">
+                                        <textarea name="resolutionNotes" placeholder="Notes" 
+                                                  class="w-full px-2 py-1 border border-gray-300 rounded text-sm mb-2"></textarea>
+                                        <select name="finalStatus" required
+                                                class="w-full px-2 py-1 border border-gray-300 rounded text-sm mb-2">
+                                            <option value="TRANSFER_COMPLETED">Complete Transfer</option>
+                                            <option value="REFUNDED">Refund</option>
+                                            <option value="CANCELLED">Cancel</option>
+                                        </select>
+                                        <button type="submit" class="px-3 py-1 bg-green-600 text-white rounded hover:bg-green-700 text-sm">
+                                            Resolve
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" th:replace="~{layout :: layout(~{::title}, ~{::content})}">
+<head>
+    <title th:text="${listing.title + ' - Flippa Clone'}">Listing Details</title>
+</head>
+<body>
+    <div th:fragment="content">
+        <div class="container mx-auto px-4 py-8">
+            <div class="grid lg:grid-cols-3 gap-8">
+                <div class="lg:col-span-2">
+                    <h2 class="text-4xl font-bold mb-2" th:text="${listing.title}"></h2>
+                    <p class="text-gray-600 mb-6" th:text="${listing.type}"></p>
+                    
+                    <img th:if="${listing.imageUrl != null}" th:src="${listing.imageUrl}" 
+                         class="w-full rounded-lg mb-6 max-h-96 object-cover" alt="Listing image" />
+                    
+                    <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+                        <h5 class="text-xl font-bold mb-4">Description</h5>
+                        <p class="text-gray-700 whitespace-pre-line" th:text="${listing.description}"></p>
+                    </div>
+                    
+                    <div th:if="${listing.websiteInfo != null}" class="bg-white rounded-lg shadow-md p-6">
+                        <h5 class="text-xl font-bold mb-4">Website Information</h5>
+                        <div class="space-y-3">
+                            <p th:if="${listing.websiteInfo.domain}">
+                                <strong>Domain:</strong> <span th:text="${listing.websiteInfo.domain}"></span>
+                            </p>
+                            <p th:if="${listing.websiteInfo.platform}">
+                                <strong>Platform:</strong> <span th:text="${listing.websiteInfo.platform}"></span>
+                            </p>
+                            <p th:if="${listing.websiteInfo.monthlyTraffic}">
+                                <strong>Monthly Traffic:</strong> 
+                                <span th:text="${#numbers.formatDecimal(listing.websiteInfo.monthlyTraffic, 0, 'COMMA', 0, 'POINT')}"></span>
+                            </p>
+                            <p th:if="${listing.websiteInfo.monthlyRevenue}">
+                                <strong>Monthly Revenue:</strong> 
+                                <span th:text="'$' + #numbers.formatDecimal(listing.websiteInfo.monthlyRevenue, 0, 'COMMA', 2, 'POINT')}"></span>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="lg:col-span-1">
+                    <div class="bg-white rounded-lg shadow-xl p-6 sticky top-20">
+                        <h3 class="text-3xl font-bold text-blue-600 mb-4" th:text="${'$' + #numbers.formatDecimal(listing.price, 0, 'COMMA', 2, 'POINT')}"></h3>
+                        <p class="text-gray-600 mb-6">Seller: <span th:text="${listing.sellerName}"></span></p>
+                        
+                        <form sec:authorize="isAuthenticated()" th:action="@{/escrow/create}" method="post" class="space-y-4">
+                            <input type="hidden" name="listingId" th:value="${listing.id}">
+                            <div>
+                                <label for="paymentGateway" class="block text-sm font-medium text-gray-700 mb-2">Payment Gateway</label>
+                                <select class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-transparent outline-none" 
+                                        id="paymentGateway" name="paymentGateway" required>
+                                    <option value="PAYPAL">PayPal</option>
+                                    <option value="PAYNOW_ZIM">PayNow Zim</option>
+                                </select>
+                            </div>
+                            <button type="submit" class="w-full bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 font-semibold">
+                                Buy Now
+                            </button>
+                        </form>
+                        
+                        <div sec:authorize="!isAuthenticated()" class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                            <a href="/login" class="text-blue-600 hover:underline font-semibold">Login</a> to purchase this listing.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: layout(~{::title}, ~{::content})}">
+<head>
+    <title>Admin Dashboard - Flippa Clone</title>
+</head>
+<body>
+    <div th:fragment="content">
+        <div class="container mx-auto px-4 py-8">
+            <h2 class="text-4xl font-extrabold text-[#1f2a44] mb-8">Admin Dashboard</h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <h5 class="text-gray-600 mb-2">Total Users</h5>
+                    <h2 class="text-4xl font-bold text-blue-600" th:text="${totalUsers}"></h2>
+                </div>
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <h5 class="text-gray-600 mb-2">Active Listings</h5>
+                    <h2 class="text-4xl font-bold text-green-600" th:text="${totalListings}"></h2>
+                </div>
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <h5 class="text-gray-600 mb-2">Open Disputes</h5>
+                    <h2 class="text-4xl font-bold text-red-600" th:text="${totalDisputes}"></h2>
+                </div>
+            </div>
+            
+            <div class="flex flex-wrap gap-4">
+                <a href="/admin/users" class="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-semibold">
+                    Manage Users
+                </a>
+                <a href="/admin/listings" class="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-semibold">
+                    Manage Listings
+                </a>
+                <a href="/admin/disputes" class="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-semibold">
+                    Manage Disputes
+                </a>
+                <a href="/admin/settings" class="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-semibold">
+                    System Settings
+                </a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

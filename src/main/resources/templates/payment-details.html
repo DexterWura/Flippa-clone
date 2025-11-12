@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: layout(~{::title}, ~{::content})}">
+<head>
+    <title>Payment Details - Flippa Clone</title>
+</head>
+<body>
+    <div th:fragment="content">
+        <div class="container mx-auto px-4 py-8">
+            <h2 class="text-4xl font-extrabold text-[#1f2a44] mb-8">Payment Details</h2>
+            
+            <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div>
+                        <p class="text-gray-600 mb-2"><strong>Amount:</strong></p>
+                        <p class="text-3xl font-bold text-blue-600" th:text="${'$' + #numbers.formatDecimal(payment.amount, 0, 'COMMA', 2, 'POINT')}"></p>
+                    </div>
+                    <div>
+                        <p class="text-gray-600 mb-2"><strong>Status:</strong></p>
+                        <span th:classappend="${payment.status.name() == 'COMPLETED' ? 'bg-green-100 text-green-700' : 
+                                               payment.status.name() == 'PROCESSING' ? 'bg-yellow-100 text-yellow-700' : 
+                                               payment.status.name() == 'FAILED' ? 'bg-red-100 text-red-700' : 
+                                               'bg-gray-100 text-gray-700'}" 
+                              class="px-3 py-1 rounded-full text-sm font-semibold" th:text="${payment.status.name()}"></span>
+                    </div>
+                    <div>
+                        <p class="text-gray-600 mb-2"><strong>Gateway:</strong></p>
+                        <p th:text="${payment.gateway.name()}"></p>
+                    </div>
+                    <div>
+                        <p class="text-gray-600 mb-2"><strong>Transaction ID:</strong></p>
+                        <p class="font-mono text-sm" th:text="${payment.transactionId}"></p>
+                    </div>
+                </div>
+            </div>
+            
+            <div th:if="${payment.status.name() == 'PROCESSING' && payment.gateway.name() == 'PAYNOW_ZIM' && payment.callbackUrl != null}" 
+                 class="bg-blue-50 border border-blue-200 rounded-lg p-6 mb-6">
+                <h3 class="text-xl font-bold mb-4">Complete Your Payment</h3>
+                <p class="mb-4">You will be redirected to PayNow to complete your payment.</p>
+                <a th:href="${payment.callbackUrl}" 
+                   target="_blank"
+                   class="inline-block px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-semibold">
+                    Continue to PayNow
+                </a>
+            </div>
+            
+            <div th:if="${payment.status.name() == 'COMPLETED'}" 
+                 class="bg-green-50 border border-green-200 rounded-lg p-6">
+                <h3 class="text-xl font-bold text-green-800 mb-2">Payment Completed Successfully</h3>
+                <p class="text-green-700">Your payment has been received. The escrow process will continue.</p>
+                <a th:href="@{/escrow/{id}(id=${payment.escrowId})}" 
+                   class="inline-block mt-4 px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 font-semibold">
+                    View Escrow Details
+                </a>
+            </div>
+            
+            <div th:if="${payment.status.name() == 'FAILED'}" 
+                 class="bg-red-50 border border-red-200 rounded-lg p-6">
+                <h3 class="text-xl font-bold text-red-800 mb-2">Payment Failed</h3>
+                <p class="text-red-700" th:if="${payment.failureReason}" th:text="${payment.failureReason}"></p>
+                <a th:href="@{/escrow/{id}(id=${payment.escrowId})}" 
+                   class="inline-block mt-4 px-6 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 font-semibold">
+                    Try Again
+                </a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+
