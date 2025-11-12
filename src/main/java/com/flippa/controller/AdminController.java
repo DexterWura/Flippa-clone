@@ -144,8 +144,8 @@ public class AdminController {
         List<SystemConfig> allConfigs = adminService.getAllConfigs();
         model.addAttribute("configs", allConfigs);
         
-        // Extract system name config
-        SystemConfig systemName = allConfigs.stream()
+        // Extract system name config (use different name to avoid conflict with GlobalControllerAdvice)
+        SystemConfig systemNameConfig = allConfigs.stream()
             .filter(c -> c.getConfigKey().equals("system.name"))
             .findFirst().orElse(null);
         
@@ -179,7 +179,7 @@ public class AdminController {
             .filter(c -> c.getConfigKey().equals("payment.gateway.paynow-zim.result-url"))
             .findFirst().orElse(null);
         
-        model.addAttribute("systemName", systemName);
+        model.addAttribute("systemNameConfig", systemNameConfig);
         model.addAttribute("paypalEnabled", paypalEnabled);
         model.addAttribute("paypalClientId", paypalClientId);
         model.addAttribute("paypalClientSecret", paypalClientSecret);

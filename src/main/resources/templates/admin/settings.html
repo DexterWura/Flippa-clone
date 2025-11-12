@@ -34,11 +34,21 @@
     </header>
 
     <!-- Flash Messages -->
-    <div th:if="${success}" class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 mx-4 mt-4" role="alert">
-        <span th:text="${success}"></span>
+    <div th:if="${success}" class="flash-message success" role="alert">
+        <div class="container mx-auto flex items-center justify-between">
+            <span th:text="${success}"></span>
+            <button onclick="this.parentElement.parentElement.remove()" class="ml-4 text-white hover:text-gray-200">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
     </div>
-    <div th:if="${error}" class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mx-4 mt-4" role="alert">
-        <span th:text="${error}"></span>
+    <div th:if="${error}" class="flash-message error" role="alert">
+        <div class="container mx-auto flex items-center justify-between">
+            <span th:text="${error}"></span>
+            <button onclick="this.parentElement.parentElement.remove()" class="ml-4 text-white hover:text-gray-200">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
     </div>
 
     <div class="flex" style="height: calc(100vh - 3.5rem);">
@@ -115,7 +125,7 @@
                                 <input type="hidden" name="key" value="system.name">
                                 <input type="hidden" name="description" value="System/Application name displayed throughout the application">
                                 <input type="text" name="value" 
-                                       th:value="${systemName != null ? systemName.configValue : 'Flippa Clone'}"
+                                       th:value="${systemNameConfig != null ? systemNameConfig.configValue : (systemName != null ? systemName : 'Flippa Clone')}"
                                        class="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-transparent outline-none"
                                        placeholder="Enter System Name"
                                        required>
@@ -287,10 +297,12 @@
                                     <td class="px-6 py-4 text-sm" th:text="${config.configValue != null ? config.configValue : 'N/A'}"></td>
                                     <td class="px-6 py-4 text-sm" th:text="${config.description != null ? config.description : 'N/A'}"></td>
                                     <td class="px-6 py-4 whitespace-nowrap">
-                                        <span th:classappend="${config.enabled != null and config.enabled ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}" 
-                                              class="px-2 py-1 rounded-full text-xs font-semibold" th:text="${config.enabled != null ? config.enabled : 'false'}"></span>
+                                        <span th:if="${config.enabled != null and config.enabled}" 
+                                              class="px-2 py-1 rounded-full text-xs font-semibold bg-green-100 text-green-700">true</span>
+                                        <span th:if="${config.enabled == null or !config.enabled}" 
+                                              class="px-2 py-1 rounded-full text-xs font-semibold bg-red-100 text-red-700">false</span>
                                     </td>
-                                    <td class="px-6 py-4 whitespace-nowrap">
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm">
                                         <form th:action="@{/admin/settings/{key}/toggle(key=${config.configKey})}" method="post" class="inline mr-2">
                                             <input type="hidden" name="enabled" th:value="${config.enabled == null or !config.enabled}">
                                             <button type="submit" class="px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700 text-sm">
@@ -299,8 +311,9 @@
                                         </form>
                                         <form th:action="@{/admin/settings/update}" method="post" class="inline">
                                             <input type="hidden" name="key" th:value="${config.configKey}">
+                                            <input type="hidden" name="description" th:value="${config.description != null ? config.description : ''}">
                                             <input type="text" name="value" th:value="${config.configValue != null ? config.configValue : ''}" required
-                                                   class="px-2 py-1 border border-gray-300 rounded text-sm mr-2">
+                                                   class="px-2 py-1 border border-gray-300 rounded text-sm mr-2 w-32">
                                             <button type="submit" class="px-3 py-1 bg-gray-600 text-white rounded hover:bg-gray-700 text-sm">
                                                 Update
                                             </button>
