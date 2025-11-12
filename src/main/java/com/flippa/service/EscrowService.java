@@ -137,11 +137,11 @@ public class EscrowService {
         Escrow escrow = escrowRepository.findById(escrowId)
             .orElseThrow(() -> new RuntimeException("Escrow not found"));
         
-        escrow.setDisputeResolved(true);
         escrow.setDisputeResolution(resolution);
         escrow.setAdminResolutionNotes(resolutionNotes);
         escrow.setResolvedByAdmin(adminUser);
         escrow.setStatus(finalStatus);
+        escrow.setDisputeRaised(false); // Mark dispute as resolved
         escrow.setDisputeResolvedAt(java.time.LocalDateTime.now());
         escrowRepository.save(escrow);
         

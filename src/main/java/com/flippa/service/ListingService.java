@@ -1,6 +1,7 @@
 package com.flippa.service;
 
 import com.flippa.dto.ListingDTO;
+import com.flippa.dto.WebsiteInfoDTO;
 import com.flippa.entity.Listing;
 import com.flippa.entity.User;
 import com.flippa.entity.WebsiteInfo;

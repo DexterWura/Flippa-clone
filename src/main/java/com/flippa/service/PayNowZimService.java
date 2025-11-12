@@ -5,8 +5,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import zw.co.paynow.core.Paynow;
 import zw.co.paynow.core.Payment;
-import zw.co.paynow.core.WebInitResponse;
-import zw.co.paynow.core.StatusResponse;
+import zw.co.paynow.responses.WebInitResponse;
+import zw.co.paynow.responses.StatusResponse;
 
 import java.math.BigDecimal;
 import java.util.Map;
