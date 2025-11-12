@@ -13,7 +13,7 @@
             <div class="floating f3 absolute w-36 h-36 rounded-full bg-white/15 blur-sm -right-16 bottom-20"></div>
             
             <!-- Wave SVG -->
-            <div class="absolute bottom-0 left-0 right-0 h-30" style="background: url('data:image/svg+xml;utf8,<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 1440 320\"><path fill=\"%23f7f9fc\" fill-opacity=\"1\" d=\"M0,192L60,186.7C120,181,240,171,360,176C480,181,600,203,720,197.3C840,192,960,160,1080,154.7C1200,149,1320,171,1380,181.3L1440,192L1440,320L1380,320C1320,320,1200,320,1080,320C960,320,840,320,720,320C600,320,480,320,360,320C240,320,120,320,60,320L0,320Z\"></path></svg>') bottom center/cover no-repeat;"></div>
+            <div class="absolute bottom-0 left-0 right-0 h-30" style="background: url('data:image/svg+xml;utf8,<svg xmlns=&quot;http://www.w3.org/2000/svg&quot; viewBox=&quot;0 0 1440 320&quot;><path fill=&quot;%23f7f9fc&quot; fill-opacity=&quot;1&quot; d=&quot;M0,192L60,186.7C120,181,240,171,360,176C480,181,600,203,720,197.3C840,192,960,160,1080,154.7C1200,149,1320,171,1380,181.3L1440,192L1440,320L1380,320C1320,320,1200,320,1080,320C960,320,840,320,720,320C600,320,480,320,360,320C240,320,120,320,60,320L0,320Z&quot;></path></svg>') bottom center/cover no-repeat;"></div>
             
             <div class="container mx-auto px-4 relative z-10">
                 <div class="grid lg:grid-cols-2 gap-8 items-center">
@@ -47,7 +47,7 @@
                                     <div class="md:col-span-6">
                                         <div class="flex items-center border border-gray-300 rounded-lg px-3 py-2">
                                             <i class="fas fa-search text-gray-400 mr-2"></i>
-                                            <input type="search" name="search" class="flex-1 outline-none" placeholder="Search listings (e.g., Shopify store, IG handle, 2-word .com)" id="query" />
+                                            <input type="search" name="search" class="flex-1 outline-none" placeholder="Search listings..." id="query" />
                                         </div>
                                     </div>
                                     <div class="md:col-span-2">
@@ -90,39 +90,39 @@
                     <p class="text-[#5a6a85]">Hand‑picked listings that buyers are watching.</p>
                 </div>
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                    <div th:each="listing, iterStat : ${featuredListings}" 
-                         th:if="${iterStat.index < 4}"
-                         class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-all duration-150 hover:-translate-y-1 relative">
-                        <!-- Badge Ribbon -->
-                        <div class="absolute top-3 left-3 z-10">
-                            <span th:if="${iterStat.index == 0}" 
-                                  class="bg-red-100 text-red-700 border border-red-200 px-3 py-1 rounded-full text-xs font-semibold">
-                                <i class="fas fa-gavel mr-1"></i> On Auction
-                            </span>
-                            <span th:if="${iterStat.index == 1}" 
-                                  class="bg-blue-100 text-blue-700 border border-blue-200 px-3 py-1 rounded-full text-xs font-semibold">
-                                <i class="fas fa-fire mr-1"></i> Popular
-                            </span>
-                            <span th:if="${iterStat.index == 2}" 
-                                  class="bg-green-100 text-green-700 border border-green-200 px-3 py-1 rounded-full text-xs font-semibold">
-                                <i class="fas fa-tags mr-1"></i> On Sale
-                            </span>
-                            <span th:if="${iterStat.index == 3}" 
-                                  class="bg-blue-100 text-blue-700 border border-blue-200 px-3 py-1 rounded-full text-xs font-semibold">
-                                <i class="fas fa-star mr-1"></i> Featured
-                            </span>
-                        </div>
-                        <img th:src="${listing.imageUrl != null ? listing.imageUrl : 'https://picsum.photos/seed/' + listing.id + '/600/400'}" 
-                             class="w-full h-48 object-cover" alt="Listing image" />
-                        <div class="p-4">
-                            <h5 class="font-bold text-lg mb-1" th:text="${listing.title}"></h5>
-                            <p class="text-gray-600 text-sm mb-3" th:text="${#strings.abbreviate(listing.description, 80)}"></p>
-                            <div class="flex justify-between items-center">
-                                <span class="font-bold text-xl" th:text="${'$' + #numbers.formatDecimal(listing.price, 0, 'COMMA', 2, 'POINT')}"></span>
-                                <a th:href="@{/listings/{id}(id=${listing.id})}" class="px-4 py-2 border border-blue-600 text-blue-600 rounded-lg hover:bg-blue-50 text-sm">View</a>
+                    <!-- Thymeleaf: Featured Listings -->
+                    <!-- Fallback: Static HTML if Thymeleaf fails -->
+                    <div th:if="${featuredListings != null and !featuredListings.isEmpty()}">
+                        <div th:each="listing, iterStat : ${featuredListings}" 
+                             th:if="${iterStat.index < 4}"
+                             class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-all duration-150 hover:-translate-y-1 relative">
+                            <div class="absolute top-3 left-3 z-10">
+                                <span th:if="${iterStat.index == 0}" class="bg-red-100 text-red-700 border border-red-200 px-3 py-1 rounded-full text-xs font-semibold">
+                                    <i class="fas fa-gavel mr-1"></i> On Auction
+                                </span>
+                                <span th:if="${iterStat.index == 1}" class="bg-blue-100 text-blue-700 border border-blue-200 px-3 py-1 rounded-full text-xs font-semibold">
+                                    <i class="fas fa-fire mr-1"></i> Popular
+                                </span>
+                                <span th:if="${iterStat.index == 2}" class="bg-green-100 text-green-700 border border-green-200 px-3 py-1 rounded-full text-xs font-semibold">
+                                    <i class="fas fa-tags mr-1"></i> On Sale
+                                </span>
+                                <span th:if="${iterStat.index == 3}" class="bg-blue-100 text-blue-700 border border-blue-200 px-3 py-1 rounded-full text-xs font-semibold">
+                                    <i class="fas fa-star mr-1"></i> Featured
+                                </span>
+                            </div>
+                            <img th:if="${listing.imageUrl != null}" th:src="${listing.imageUrl}" class="w-full h-48 object-cover" alt="Listing" />
+                            <img th:unless="${listing.imageUrl != null}" th:src="${'https://picsum.photos/seed/' + listing.id + '/600/400'}" class="w-full h-48 object-cover" alt="Listing" />
+                            <div class="p-4">
+                                <h5 class="font-bold text-lg mb-1" th:text="${listing.title}">Sample Listing</h5>
+                                <p class="text-gray-600 text-sm mb-3" th:text="${listing.description != null ? #strings.abbreviate(listing.description, 80) : 'No description'}">Sample description</p>
+                                <div class="flex justify-between items-center">
+                                    <span class="font-bold text-xl" th:text="${listing.price != null ? '$' + #numbers.formatDecimal(listing.price, 0, 'COMMA', 2, 'POINT') : '$0'}">$0</span>
+                                    <a th:href="@{/listings/{id}(id=${listing.id})}" class="px-4 py-2 border border-blue-600 text-blue-600 rounded-lg hover:bg-blue-50 text-sm">View</a>
+                                </div>
                             </div>
                         </div>
                     </div>
+                    <!-- Fallback HTML when no listings -->
                     <div th:if="${featuredListings == null or featuredListings.isEmpty()}" class="col-span-full text-center py-12">
                         <p class="text-gray-500">No featured listings available at the moment.</p>
                     </div>
@@ -130,104 +130,40 @@
             </div>
         </section>
 
-        <!-- Online Businesses Section -->
-        <section id="online-businesses" class="py-12 bg-white border-t border-b">
+        <!-- All Listings Section -->
+        <section class="py-12 bg-white border-t">
             <div class="container mx-auto px-4">
-                <div class="flex items-end justify-between mb-6">
+                <div class="flex justify-between items-end mb-6">
                     <div>
                         <h3 class="text-3xl font-extrabold text-[#1f2a44] mb-1">
-                            <i class="fas fa-briefcase text-blue-600 mr-2"></i> Online businesses
+                            <i class="fas fa-briefcase text-blue-600 mr-2"></i>All Active Listings
                         </h3>
-                        <p class="text-[#5a6a85] mb-0">SaaS, e‑commerce, content, and more.</p>
+                        <p class="text-[#5a6a85]">Browse all available listings</p>
                     </div>
-                    <a href="/listings" class="px-4 py-2 border border-blue-600 text-blue-600 rounded-lg hover:bg-blue-50 text-sm">View all</a>
+                    <a href="/listings" class="px-4 py-2 border border-blue-600 text-blue-600 rounded-lg hover:bg-blue-50">View all</a>
                 </div>
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    <div th:each="listing : ${activeListings}" 
-                         th:if="${listing.type.name() == 'WEBSITE' or listing.type.name() == 'SAAS' or listing.type.name() == 'ECOMMERCE_STORE'}"
-                         class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-all duration-150 hover:-translate-y-1">
-                        <img th:src="${listing.imageUrl != null ? listing.imageUrl : 'https://picsum.photos/seed/' + listing.id + '/600/400'}" 
-                             class="w-full h-48 object-cover" alt="Listing image" />
-                        <div class="p-4">
-                            <div class="flex items-center justify-between mb-2">
-                                <h5 class="font-bold text-lg" th:text="${listing.title}"></h5>
-                                <span class="bg-red-100 text-red-700 border border-red-200 px-2 py-1 rounded text-xs font-semibold">Auction</span>
-                            </div>
-                            <p class="text-gray-600 text-sm mb-3">85k/mo pageviews • $3.4k/mo ads & affiliates</p>
-                            <div class="flex justify-between items-center">
-                                <span class="font-bold text-xl" th:text="${'$' + #numbers.formatDecimal(listing.price, 0, 'COMMA', 2, 'POINT')}"></span>
-                                <a th:href="@{/listings/{id}(id=${listing.id})}" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm">Bid now</a>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                    <!-- Thymeleaf: Active Listings -->
+                    <div th:if="${activeListings != null and !activeListings.isEmpty()}">
+                        <div th:each="listing : ${activeListings}" 
+                             class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-all duration-150 hover:-translate-y-1">
+                            <img th:if="${listing.imageUrl != null}" th:src="${listing.imageUrl}" class="w-full h-40 object-cover" alt="Listing" />
+                            <img th:unless="${listing.imageUrl != null}" th:src="${'https://picsum.photos/seed/' + listing.id + '/600/400'}" class="w-full h-40 object-cover" alt="Listing" />
+                            <div class="p-4">
+                                <h6 class="font-bold mb-2" th:text="${listing.title}">Sample Listing</h6>
+                                <p class="text-gray-600 text-sm mb-3">
+                                    <span class="bg-gray-100 px-2 py-1 rounded text-xs" th:text="${listing.type != null ? listing.type.name() : 'UNKNOWN'}">TYPE</span>
+                                </p>
+                                <div class="flex justify-between items-center">
+                                    <span class="font-bold" th:text="${listing.price != null ? '$' + #numbers.formatDecimal(listing.price, 0, 'COMMA', 2, 'POINT') : '$0'}">$0</span>
+                                    <a th:href="@{/listings/{id}(id=${listing.id})}" class="px-3 py-1 border border-blue-600 text-blue-600 rounded hover:bg-blue-50 text-sm">View</a>
+                                </div>
                             </div>
                         </div>
                     </div>
+                    <!-- Fallback HTML when no listings -->
                     <div th:if="${activeListings == null or activeListings.isEmpty()}" class="col-span-full text-center py-12">
                         <p class="text-gray-500">No listings available at the moment.</p>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Social Media Accounts Section -->
-        <section id="social-accounts" class="py-12">
-            <div class="container mx-auto px-4">
-                <div class="flex items-end justify-between mb-6">
-                    <div>
-                        <h3 class="text-3xl font-extrabold text-[#1f2a44] mb-1">
-                            <i class="fas fa-hashtag text-blue-600 mr-2"></i> Social media accounts
-                        </h3>
-                        <p class="text-[#5a6a85] mb-0">Instagram, YouTube, TikTok, X, and more.</p>
-                    </div>
-                    <a href="/listings" class="px-4 py-2 border border-blue-600 text-blue-600 rounded-lg hover:bg-blue-50 text-sm">View all</a>
-                </div>
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    <div th:each="listing : ${activeListings}" 
-                         th:if="${listing.type.name() == 'SOCIAL_MEDIA_ACCOUNT'}"
-                         class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-all duration-150 hover:-translate-y-1">
-                        <img th:src="${listing.imageUrl != null ? listing.imageUrl : 'https://picsum.photos/seed/' + listing.id + '/600/400'}" 
-                             class="w-full h-48 object-cover" alt="Listing image" />
-                        <div class="p-4">
-                            <div class="flex items-center justify-between mb-2">
-                                <h5 class="font-bold text-lg" th:text="${listing.title}"></h5>
-                                <span class="bg-red-100 text-red-700 border border-red-200 px-2 py-1 rounded text-xs font-semibold">Auction</span>
-                            </div>
-                            <p class="text-gray-600 text-sm mb-3">RPM $4.8 • 60% Tier‑1 audience</p>
-                            <div class="flex justify-between items-center">
-                                <span class="font-bold text-xl" th:text="${'$' + #numbers.formatDecimal(listing.price, 0, 'COMMA', 2, 'POINT')}"></span>
-                                <a th:href="@{/listings/{id}(id=${listing.id})}" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm">Bid now</a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Domains Section -->
-        <section id="domains" class="py-12 bg-white border-t">
-            <div class="container mx-auto px-4">
-                <div class="flex items-end justify-between mb-6">
-                    <div>
-                        <h3 class="text-3xl font-extrabold text-[#1f2a44] mb-1">
-                            <i class="fas fa-globe text-blue-600 mr-2"></i> Domains on sale
-                        </h3>
-                        <p class="text-[#5a6a85] mb-0">Brandable .com, premium .io, and more.</p>
-                    </div>
-                    <a href="/listings" class="px-4 py-2 border border-blue-600 text-blue-600 rounded-lg hover:bg-blue-50 text-sm">View all</a>
-                </div>
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                    <div th:each="listing : ${activeListings}" 
-                         th:if="${listing.type.name() == 'DOMAIN'}"
-                         class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-all duration-150 hover:-translate-y-1">
-                        <div class="p-4">
-                            <div class="flex items-center justify-between mb-2">
-                                <h5 class="font-bold text-lg" th:text="${listing.title}"></h5>
-                                <span class="bg-red-100 text-red-700 border border-red-200 px-2 py-1 rounded text-xs font-semibold">Auction</span>
-                            </div>
-                            <p class="text-gray-600 text-sm mb-3">2‑word .com • Finance brand</p>
-                            <div class="flex justify-between items-center">
-                                <span class="font-bold text-xl" th:text="${'$' + #numbers.formatDecimal(listing.price, 0, 'COMMA', 2, 'POINT')}"></span>
-                                <a th:href="@{/listings/{id}(id=${listing.id})}" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm">Bid now</a>
-                            </div>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -262,7 +198,7 @@
             }
             setTimeout(typeLoop, deleting ? deleteSpeed : typeSpeed);
         }
-        typeLoop();
+        if (el) typeLoop();
     </script>
 </body>
 </html>

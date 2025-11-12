@@ -50,6 +50,8 @@ server:
   error:
     include-message: always
     include-binding-errors: always
+    include-stacktrace: ${SHOW_ERROR_DETAILS:always} # Set to never in production
+    include-exception: ${SHOW_ERROR_DETAILS:true} # Set to false in production
 
 logging:
   level:
@@ -78,4 +80,8 @@ app:
     enabled: true
     timeout: 5000
     user-agent: Mozilla/5.0 (compatible; FlippaCloneBot/1.0)
+  
+  # Error handling
+  error:
+    show-details: ${SHOW_ERROR_DETAILS:true} # Set to false in production
 

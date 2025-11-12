@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: layout(~{::title}, ~{::content})}">
+<head>
+    <title>400 Bad Request - Flippa Clone</title>
+</head>
+<body>
+    <div th:fragment="content">
+        <div class="container mx-auto px-4 py-16 text-center">
+            <div class="max-w-2xl mx-auto">
+                <h1 class="text-9xl font-extrabold text-blue-600 mb-4">400</h1>
+                <h2 class="text-4xl font-bold text-[#1f2a44] mb-4">Bad Request</h2>
+                <p class="text-xl text-gray-600 mb-8">
+                    The request you sent was invalid or malformed. Please check your input and try again.
+                </p>
+                <div th:if="${showErrorDetails != null and showErrorDetails and exception != null}" class="bg-red-50 border border-red-200 rounded-lg p-6 mb-8 text-left">
+                    <h3 class="font-bold text-red-800 mb-2">Error Details (Development Mode):</h3>
+                    <p class="text-sm text-red-700"><strong>Exception:</strong> <span th:text="${exception}"></span></p>
+                    <p class="text-sm text-red-700" th:if="${exceptionMessage}"><strong>Message:</strong> <span th:text="${exceptionMessage}"></span></p>
+                    <p class="text-sm text-red-700" th:if="${requestUri}"><strong>Request URI:</strong> <span th:text="${requestUri}"></span></p>
+                </div>
+                <a href="/" class="inline-block px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-semibold">
+                    Go to Home
+                </a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+
