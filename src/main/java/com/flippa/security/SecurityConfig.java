@@ -21,9 +21,12 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 public class SecurityConfig {
     
     private final UserDetailsService userDetailsService;
+    private final AuthenticationSuccessHandler authenticationSuccessHandler;
     
-    public SecurityConfig(UserDetailsService userDetailsService) {
+    public SecurityConfig(UserDetailsService userDetailsService,
+                         AuthenticationSuccessHandler authenticationSuccessHandler) {
         this.userDetailsService = userDetailsService;
+        this.authenticationSuccessHandler = authenticationSuccessHandler;
     }
     
     @Bean
@@ -58,7 +61,7 @@ public class SecurityConfig {
             .formLogin(form -> form
                 .loginPage("/login")
                 .loginProcessingUrl("/login")
-                .defaultSuccessUrl("/home", true)
+                .successHandler(authenticationSuccessHandler)
                 .failureUrl("/login?error=true")
                 .permitAll()
             )
